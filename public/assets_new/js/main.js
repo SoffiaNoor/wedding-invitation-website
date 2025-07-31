@@ -26,43 +26,43 @@ openInvitation.addEventListener("click", () => {
 
     // Show transition screen
     tl.set("#transition-screen", { pointerEvents: "all" }, "+=0.1")
-        .to("#transition-screen", { opacity: 1, duration: 0.5, ease: "power2.out" })
-        .fromTo("#transition-img", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.5)" })
-        .fromTo("#ground", { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "+=0.2")
-        .fromTo("#bride", { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "+=0.2")
-        .fromTo(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower"], {
-            y: 100, opacity: 0
-        }, {
-            y: 0, opacity: 1, duration: 1, ease: "power3.out"
-        }, "+=0.2")
-        .to(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower"], {
-            rotate: 10, duration: 1, yoyo: true, repeat: -1, ease: "sine.inOut"
-        }, "-=0.8")
-        .fromTo(["#leftLeaf3", "#rightLeaf3"], {
-            y: 100, opacity: 0
-        }, {
-            y: 0, opacity: 1, duration: 1, ease: "power3.out"
-        }, "+=0.2")
-        .to(["#leftLeaf3", "#rightLeaf3"], {
-            rotate: 0, duration: 1, yoyo: true, repeat: -1, ease: "sine.inOut"
-        }, "-=0.8")
-        .set("#birds", {
-            left: "-200px",
-            bottom: "200px",
-            opacity: 0
-        })
-        .to("#birds", {
-            left: "calc(100% + 200px)",
-            bottom: "700px",
-            opacity: 1,
-            duration: 3,
-            ease: "power1.inOut"
-        }, "+=0.2")
-        .to("#transition-screen", {
-            opacity: 0,
-            duration: 0.5,
-            ease: "power2.in"
-        })
+        // .to("#transition-screen", { opacity: 1, duration: 0.5, ease: "power2.out" })
+        // .fromTo("#transition-img", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.5)" })
+        // .fromTo("#ground", { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "+=0.2")
+        // .fromTo("#bride", { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "+=0.2")
+        // .fromTo(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower"], {
+        //     y: 100, opacity: 0
+        // }, {
+        //     y: 0, opacity: 1, duration: 1, ease: "power3.out"
+        // }, "+=0.2")
+        // .to(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower"], {
+        //     rotate: 10, duration: 1, yoyo: true, repeat: -1, ease: "sine.inOut"
+        // }, "-=0.8")
+        // .fromTo(["#leftLeaf3", "#rightLeaf3"], {
+        //     y: 100, opacity: 0
+        // }, {
+        //     y: 0, opacity: 1, duration: 1, ease: "power3.out"
+        // }, "+=0.2")
+        // .to(["#leftLeaf3", "#rightLeaf3"], {
+        //     rotate: 0, duration: 1, yoyo: true, repeat: -1, ease: "sine.inOut"
+        // }, "-=0.8")
+        // .set("#birds", {
+        //     left: "-200px",
+        //     bottom: "200px",
+        //     opacity: 0
+        // })
+        // .to("#birds", {
+        //     left: "calc(100% + 200px)",
+        //     bottom: "700px",
+        //     opacity: 1,
+        //     duration: 3,
+        //     ease: "power1.inOut"
+        // }, "+=0.2")
+        // .to("#transition-screen", {
+        //     opacity: 0,
+        //     duration: 0.5,
+        //     ease: "power2.in"
+        // })
 
         .call(() => {
             const transitionScreen = document.getElementById("transition-screen");
