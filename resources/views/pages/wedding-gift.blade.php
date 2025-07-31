@@ -28,7 +28,7 @@
         </h2>
 
         <div
-            class="wedding-gift-text font-dmSerif text-base sm:text-lg md:text-2xl text-[#641b0f] leading-relaxed mt-5">
+            class="wedding-gift-text font-dmSerif text-base md:text-lg lg:text-xl text-[#641b0f] leading-relaxed mt-5">
             Doa restu Anda adalah anugerah terindah bagi kami. <br />
             Dan apabila Bapak/Ibu berkenan mengungkapkan tanda kasih melalui hadiah,
             kami juga menyediakan pilihan pemberian secara cashless.

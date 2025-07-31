@@ -28,50 +28,49 @@
     </audio>
 
     <div id="intro-screen"
-        class="relative h-screen w-screen flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat overflow-hidden"
+        class="h-screen w-screen flex items-center justify-center bg-cover bg-center bg-no-repeat relative"
         style="background-image: url('{{ asset('assets_new/images/background-red.png') }}');">
 
         <!-- Decorative Flowers -->
-        <img id="flower1" class="absolute bottom-[5%] right-[-10%] lg:w-[30%] md:w-[35%] w-[45%] h-auto z-20"
+        <img id="flower1"
+            class="absolute right-[-60px] lg:bottom-[-120px] bottom-[-50px] lg:w-[30%] md:w-[40%] w-[50%] h-auto z-20"
             src="{{ asset('assets_new/images/flower-1.png') }}" alt="flower" />
-
-        <img id="flower2" class="absolute top-[0%] left-[-10%] lg:w-[30%] md:w-[35%] w-[45%] h-auto z-20"
+        <img id="flower2"
+            class="absolute left-[-60px] lg:left-[-200px] lg:top-[-120px] top-[-80px] lg:w-[30%] md:w-[40%] w-[50%] h-auto z-20"
             src="{{ asset('assets_new/images/flower-2.png') }}" alt="flower" />
 
-        <!-- Decorative Borders -->
-        <img id="borderTR" class="absolute top-[20px] right-[20px] lg:w-[10%] md:w-[15%] w-[22%] h-auto z-20"
+        <!-- Corners -->
+        <img id="borderTR" class="absolute top-[20px] right-[20px] lg:w-[10%] w-[25%] h-auto z-20"
             src="{{ asset('assets_new/images/border-tr.png') }}" />
-
-        <img id="borderBL" class="absolute bottom-[20px] left-[20px] lg:w-[10%] md:w-[15%] w-[22%] h-auto z-20"
+        <img id="borderBL" class="absolute bottom-[20px] left-[20px] lg:w-[10%] w-[25%] h-auto z-20"
             src="{{ asset('assets_new/images/border-bl.png') }}" />
 
-        <!-- Title -->
-        <div class="absolute top-[100px] md:top-[120px] lg:top-[100px] w-full text-center z-10">
-            <h2 class="font-brittany text-4xl md:text-6xl lg:text-7xl text-white">
+        <!-- Centered Content -->
+        <div class="z-30 text-center flex flex-col items-center justify-center w-full max-w-screen-md px-4">
+            <h2 class="font-brittany text-white text-5xl md:text-6xl lg:text-7xl mb-6">
                 The Wedding Of
             </h2>
-        </div>
 
-        <!-- Circle Image -->
-        <div class="absolute inset-0 flex items-center justify-center z-10">
-            <img id="circle" class="object-contain lg:w-[20%] md:w-[40%] w-[60%] h-auto"
-                src="{{ asset('assets_new/images/circle.png') }}" />
-        </div>
+            <div class="relative w-[70%] md:w-[50%] lg:w-[40%] aspect-square mx-auto mb-6">
+                <img id="circle" class="absolute inset-0 w-full h-full object-contain z-10"
+                    src="{{ asset('assets_new/images/circle.png') }}" />
+                <img id="nz"
+                    class="absolute top-1/2 left-1/2 w-[60%] h-auto z-20 transform -translate-x-1/2 -translate-y-1/2"
+                    src="{{ asset('assets_new/images/nz.png') }}" />
+            </div>
 
-        <!-- NZ Image -->
-        <div class="absolute inset-0 flex items-center justify-center z-20">
-            <img id="nz" class="object-contain lg:w-[12%] md:w-[25%] w-[35%] h-auto"
-                src="{{ asset('assets_new/images/nz.png') }}" />
-        </div>
+            <div class="text-white text-lg md:text-xl font-dmSerif mb-6">
+                To: John Doe & Family
+            </div>
 
-        <!-- Open Invitation Button -->
-        <div class="absolute bottom-[60px] z-30">
-            <button id="openInvitation" onclick="enterInvitation()" class="relative overflow-hidden group px-8 md:px-10 py-4 md:py-5 text-2xl md:text-3xl lg:text-4xl font-brittany rounded-full 
-                       bg-[#fffded] text-[#641b0f] shadow-lg shadow-[#fffded]/20
-                       transition-transform duration-300 ease-out hover:scale-105">
+            <button id="openInvitation" onclick="enterInvitation()" class="relative overflow-hidden group px-10 py-5 text-2xl font-brittany rounded-full 
+               bg-[#fffded] text-[#641b0f] shadow-lg shadow-[#fffded]/20
+               transition-transform duration-300 ease-out
+               hover:scale-105">
                 <span class="absolute inset-0 bg-gradient-to-r from-red-200 via-white to-red-200
-                         transform -translate-x-full group-hover:translate-x-0
-                         transition-transform duration-500 ease-out"></span>
+                     transform -translate-x-full group-hover:translate-x-0
+                     transition-transform duration-500 ease-out"></span>
+
                 <span class="relative z-10 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
