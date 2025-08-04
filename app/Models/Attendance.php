@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attendance extends Model
 {
-    protected $fillable = ['invitation_id'];
+    protected $fillable = ['invitation_id', 'arrived_at'];
+
+    protected $casts = [
+        'arrived_at' => 'datetime',
+    ];
 
     public function invitation()
     {

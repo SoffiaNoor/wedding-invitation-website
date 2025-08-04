@@ -29,7 +29,7 @@
         </div>
 
         <div class="text-white text-lg md:text-xl font-dmSerif mt-2">
-            To: John Doe & Family
+            To: {{$invitation->name}}
         </div>
 
         <button id="openBtn" class="relative overflow-hidden group text-2xl font-brittany rounded-full 
