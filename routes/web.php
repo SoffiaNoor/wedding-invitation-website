@@ -20,6 +20,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/v2', function () {
+    return view('welcome-2');
+});
+
+Route::get('/percobaan', function () {
+    return view('percobaan');
+});
+
 Route::get('/clear-cache', function () {
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
