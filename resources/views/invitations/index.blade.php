@@ -63,9 +63,9 @@
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-700">
                         <div class="flex items-center gap-2">
-                            <span class="text-blue-600 underline break-all">
+                            <span class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-800 px-2 py-1 rounded">
                                 <a href="{{ config('app.url') . '/' . $inv->slug }}" target="_blank">
-                                    {{ config('app.url') . '/' . $inv->slug }}
+                                    Open Link
                                 </a>
                             </span>
                             <button onclick="navigator.clipboard.writeText('{{ config('app.url') . '/' . $inv->slug }}'); 
