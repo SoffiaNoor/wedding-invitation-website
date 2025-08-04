@@ -1,22 +1,22 @@
-const openInvitation = document.getElementById("openInvitation");
-const introScreen = document.getElementById("intro-screen");
-const transitionScreen = document.getElementById("transition-screen");
-const mainContent = document.getElementById("main-content");
+const openBtn = document.getElementById('openBtn');
+const landing = document.getElementById('landing');
+const transition = document.getElementById('transition');
+const mainContent = document.getElementById('mainContent');
 
-openInvitation.addEventListener("click", () => {
+openBtn.addEventListener("click", () => {
+    transition.classList.remove('hidden');
+
     const tl = gsap.timeline();
 
-    // Hide intro screen
-    tl.to("#intro-screen", {
+    tl.to("#landing", {
         opacity: 0,
         duration: 0.4,
         ease: "power2.inOut",
         onComplete: () => {
-            document.getElementById("intro-screen").style.display = "none";
+            document.getElementById("landing").style.display = "none";
         },
     });
 
-    // Play music
     const bgMusic = document.getElementById("bg-music");
     if (bgMusic) {
         bgMusic.play().catch(error => {
@@ -24,96 +24,72 @@ openInvitation.addEventListener("click", () => {
         });
     }
 
-    // Show transition screen
-    tl.set("#transition-screen", { pointerEvents: "all" }, "+=0.1")
-        // .to("#transition-screen", { opacity: 1, duration: 0.5, ease: "power2.out" })
-        // .fromTo("#transition-img", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.5)" })
-        // .fromTo("#ground", { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "+=0.2")
-        // .fromTo("#bride", { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "+=0.2")
-        // .fromTo(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower"], {
-        //     y: 100, opacity: 0
-        // }, {
-        //     y: 0, opacity: 1, duration: 1, ease: "power3.out"
-        // }, "+=0.2")
-        // .to(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower"], {
-        //     rotate: 10, duration: 1, yoyo: true, repeat: -1, ease: "sine.inOut"
-        // }, "-=0.8")
-        // .fromTo(["#leftLeaf3", "#rightLeaf3"], {
-        //     y: 100, opacity: 0
-        // }, {
-        //     y: 0, opacity: 1, duration: 1, ease: "power3.out"
-        // }, "+=0.2")
-        // .to(["#leftLeaf3", "#rightLeaf3"], {
-        //     rotate: 0, duration: 1, yoyo: true, repeat: -1, ease: "sine.inOut"
-        // }, "-=0.8")
-        // .set("#birds", {
-        //     left: "-200px",
-        //     bottom: "200px",
-        //     opacity: 0
-        // })
-        // .to("#birds", {
-        //     left: "calc(100% + 200px)",
-        //     bottom: "700px",
-        //     opacity: 1,
-        //     duration: 3,
-        //     ease: "power1.inOut"
-        // }, "+=0.2")
-        // .to("#transition-screen", {
-        //     opacity: 0,
-        //     duration: 0.5,
-        //     ease: "power2.in"
-        // })
+    tl.set("#transition", { pointerEvents: "all" }, "+=0.1")
+        .to("#transition", { opacity: 1, duration: 0.5, ease: "power2.out" })
+        .fromTo("#transition-img", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.5)" })
+        .fromTo("#ground", { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "+=0.2")
+        .fromTo("#bride", { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "+=0.2")
+        .fromTo(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower"], {
+            y: 100, opacity: 0
+        }, {
+            y: 0, opacity: 1, duration: 1, ease: "power3.out"
+        }, "+=0.2")
+        .to(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower"], {
+            rotate: 10, duration: 1, yoyo: true, repeat: -1, ease: "sine.inOut"
+        }, "-=0.8")
+        .fromTo(["#leftLeaf3", "#rightLeaf3"], {
+            y: 100, opacity: 0
+        }, {
+            y: 0, opacity: 1, duration: 1, ease: "power3.out"
+        }, "+=0.2")
+        .to(["#leftLeaf3", "#rightLeaf3"], {
+            rotate: 0, duration: 1, yoyo: true, repeat: -1, ease: "sine.inOut"
+        }, "-=0.8")
+        .set("#birds", {
+            left: "-200px",
+            bottom: "200px",
+            opacity: 0
+        })
+        .to("#birds", {
+            left: "calc(100% + 200px)",
+            bottom: "700px",
+            opacity: 1,
+            duration: 3,
+            ease: "power1.inOut"
+        }, "+=0.2")
+        .to("#transition", {
+            opacity: 0,
+            duration: 0.5,
+            ease: "power2.in"
+        })
 
         .call(() => {
-            const transitionScreen = document.getElementById("transition-screen");
-            const introScreen = document.getElementById("intro-screen");
-            const mainContent = document.getElementById("main-content");
+            const transition = document.getElementById("transition");
+            const landing = document.getElementById("landing");
+            const mainContent = document.getElementById("mainContent");
 
-            transitionScreen.style.display = "none";
-            introScreen.style.display = "none";
-            mainContent.style.display = "block";
+            landing.classList.add('hidden');
+            transition.classList.add('hidden');
+            mainContent.classList.remove('hidden');
             showSection("opening");
             animateSectionContent("opening");
+            animateSectionContent("date");
+            animateSectionContent("quotes");
+            animateSectionContent("barcode");
+            animateSectionContent("gallery");
+            animateSectionContent("wedding-gift");
         });
 });
 
-
-const navBtns = document.querySelectorAll(".nav-btn");
-let currentSection = "opening";
-
-navBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-        const target = btn.dataset.target;
-        if (target !== currentSection) {
-            transitionToSection(currentSection, target);
-            currentSection = target;
-        }
-    });
-});
+function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    animateSectionContent(id);
+}
 
 function showSection(sectionId) {
     const section = document.getElementById(sectionId);
     section.style.display = "flex";
     gsap.fromTo(section, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1 });
-}
-
-function transitionToSection(fromId, toId) {
-    const from = document.getElementById(fromId);
-    const to = document.getElementById(toId);
-
-    gsap.to(from, {
-        opacity: 0,
-        y: -50,
-        duration: 0.6,
-        onComplete: () => {
-            from.style.display = "none";
-            to.style.display = "flex";
-
-            gsap.fromTo(to, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.6 });
-
-            animateSectionContent(toId);
-        },
-    });
 }
 
 function animateSectionContent(sectionId) {

@@ -1,61 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
+<section id="opening"
+    class="relative h-screen flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat px-4 overflow-hidden"
+    style="background-image: url('{{ asset('assets/images/background-cream.png') }}');">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <img src="{{ asset('assets/images/flower-1.png') }}" alt="flower"
+        class="opening-flower-1 absolute z-20 h-auto right-[-40px] bottom-[-40px] sm:right-[-60px] sm:bottom-[-60px] md:right-[-80px] md:bottom-[-80px] lg:right-[-100px] lg:bottom-[-100px] w-[40%] sm:w-[40%] md:w-[40%] lg:w-[30%]" />
 
-    <title>Nabila & Zulfi Wedding</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+    <img src="{{ asset('assets/images/flower-2.png') }}" alt="flower"
+        class="opening-flower-2 absolute z-20 h-auto left-[-40px] bottom-[-40px] sm:left-[-60px] sm:bottom-[-60px] md:left-[-80px] md:bottom-[-80px] lg:left-[-100px] lg:bottom-[-100px] w-[40%] sm:w-[40%] md:w-[40%] lg:w-[30%]" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Monsieur+La+Doulaise&family=Raleway:ital,wght@0,100..900;1,100..900&family=Rouge+Script&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.cdnfonts.com/css/brittany-signature" rel="stylesheet">
-    {{-- <script src="{{asset('assets_new/js/transition.js')}}"></script> --}}
+    <img src="{{ asset('assets/images/border-tr2.png') }}" alt=""
+        class="absolute top-[20px] right-[20px] z-40 h-auto w-[30%] sm:w-[20%] md:w-[15%] lg:w-[10%]" />
 
-</head>
+    <img src="{{ asset('assets/images/border-tl.png') }}" alt=""
+        class="absolute top-[20px] left-[20px] z-40 h-auto w-[30%] sm:w-[20%] md:w-[15%] lg:w-[10%]" />
 
-<body class="relative h-screen overflow-hidden">
-    <div id="opening" class="page-section h-screen w-screen flex flex-col items-center justify-center 
-           bg-cover bg-center bg-no-repeat"
-        style="background-image: url('{{ asset('assets_new/images/background-cream.png') }}');">
+    <h2 class="font-brittany text-[#641b0f] mb-8 text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-center">
+        The Wedding Of
+    </h2>
 
-        <img class="opening-flower-1 absolute lg:bottom-[-120px] md:bottom-[-100px] bottom-[-50px] right-[-60px] lg:w-[30%] md:w-[40%] w-[60%] h-auto z-20 flower1"
-            src="{{ asset('assets_new/images/flower-1.png') }}" alt="flower" />
-        <img class="opening-flower-2 absolute lg:bottom-[-120px] bottom-[-50px] lg:left-[-200px] left-[-100px] lg:w-[30%] md:w-[45%] w-[60%] h-auto z-20 flower2"
-            src="{{ asset('assets_new/images/flower-2.png') }}" alt="flower" />
+    <img src="{{ asset('assets/images/nz.png') }}" alt="NZ Logo"
+        class="mb-8 w-[60%] sm:w-[50%] md:w-[35%] lg:w-[20%] h-auto object-contain" />
 
-        <img class="absolute top-[30px] right-[30px] lg:w-[10%] md:w-[20%] w-[30%] h-auto z-40"
-            src="{{ asset('assets_new/images/border-tr2.png') }}" />
-        <img class="absolute top-[30px] left-[30px] lg:w-[10%] md:w-[20%] w-[30%] h-auto z-40"
-            src="{{ asset('assets_new/images/border-tl.png') }}" />
-
-        <div class="title-wrapper absolute lg:top-28 top-[200px] w-full text-center z-10">
-            <h2 class="font-brittany lg:text-7xl text-5xl text-[#641b0f]">
-                The Wedding Of
-            </h2>
-        </div>
-
-        <div class="date-wrapper absolute lg:top-[280px] md:top-[350px] top-[300px] justify-center inset-0 absolute text-center z-20">
-            <img class="object-cover lg:w-[15%] md:w-[40%] w-[60%] relative h-auto place-self-center"
-                src="{{ asset('assets_new/images/nz.png') }}" />
-        </div>
-
-        <div class="date-text absolute bottom-[250px] w-full text-center z-10">
-            <h2 class="font-dmSerif lg:text-4xl text-3xl text-[#641b0f] font-light">
-                Jum’at | 05 Sept 2025
-            </h2>
-            <h2 class="font-dmSerif lg:text-5xl text-4xl text-[#641b0f] lg:mt-5 mt-3">
-                Save The Date
-            </h2>
-        </div>
+    <div class="text-center">
+        <h2 class="font-dmSerif text-[#641b0f] font-light text-2xl sm:text-3xl md:text-4xl">
+            Jum’at | 05 Sept 2025
+        </h2>
+        <h2 class="font-dmSerif text-[#641b0f] mt-3 sm:mt-4 md:mt-5 text-3xl sm:text-4xl md:text-5xl">
+            Save The Date
+        </h2>
     </div>
-
-    @include('pages.navbar')
-</body>
-
-</html>
+</section>

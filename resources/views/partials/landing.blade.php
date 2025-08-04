@@ -1,19 +1,19 @@
 <section id="landing"
     class="relative h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat overflow-hidden"
-    style="background-image: url('{{ asset('assets_new/images/background-red.png') }}');">
+    style="background-image: url('{{ asset('assets/images/background-red.png') }}');">
 
     <img id="flower1"
         class="absolute right-[-60px] lg:bottom-[-120px] bottom-[-50px] lg:w-[30%] md:w-[40%] w-[50%] h-auto z-20"
-        src="{{ asset('assets_new/images/flower-1.png') }}" alt="flower" />
+        src="{{ asset('assets/images/flower-1.png') }}" alt="flower" />
     <img id="flower2"
         class="absolute left-[-60px] lg:left-[-200px] lg:top-[-120px] top-[-80px] lg:w-[30%] md:w-[40%] w-[50%] h-auto z-20"
-        src="{{ asset('assets_new/images/flower-2.png') }}" alt="flower" />
+        src="{{ asset('assets/images/flower-2.png') }}" alt="flower" />
 
 
     <img id="borderTR" class="absolute top-[20px] right-[20px] lg:w-[10%] w-[25%] h-auto z-20"
-        src="{{ asset('assets_new/images/border-tr.png') }}" />
+        src="{{ asset('assets/images/border-tr.png') }}" />
     <img id="borderBL" class="absolute bottom-[20px] left-[20px] lg:w-[10%] w-[25%] h-auto z-20"
-        src="{{ asset('assets_new/images/border-bl.png') }}" />
+        src="{{ asset('assets/images/border-bl.png') }}" />
 
     <div class="z-30 text-center flex flex-col items-center justify-center w-full">
         <h2 class="font-brittany text-white text-4xl md:text-6xl lg:text-7xl mb-2">
@@ -22,10 +22,10 @@
 
         <div class="relative w-[40%] md:w-[40%] lg:w-[20%] aspect-square mx-auto">
             <img id="circle" class="absolute inset-0 w-full h-full object-contain z-10"
-                src="{{ asset('assets_new/images/circle.png') }}" />
+                src="{{ asset('assets/images/circle.png') }}" />
             <img id="nz"
                 class="absolute top-1/2 left-1/2 w-[50%] lg:w-[60%] h-auto z-20 transform -translate-x-1/2 -translate-y-1/2"
-                src="{{ asset('assets_new/images/nz.png') }}" />
+                src="{{ asset('assets/images/nz.png') }}" />
         </div>
 
         <div class="text-white text-lg md:text-xl font-dmSerif mt-2">

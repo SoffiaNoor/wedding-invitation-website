@@ -5,6 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Wedding Invitation</title>
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
+
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 
     <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
@@ -15,8 +17,9 @@
         rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/brittany-signature" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ asset('assets_new/css/build2.css') }}">
-    <script src="{{ asset('assets_new/js/build2.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ asset('assets/css/build.css') }}">
+    <script src="{{ asset('assets/js/build.js') }}"></script>
 
     <style>
         .fade-in {
@@ -62,24 +65,28 @@
 
 <body class="bg-white text-gray-800">
     <audio id="bg-music" autoplay loop>
-        <source src="{{ asset('assets_new/music/music1.mp3') }}" type="audio/mpeg">
+        <source src="{{ asset('assets/music/music1.mp3') }}" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
-    @include('percobaan.landing')
+    @include('partials.landing')
 
-    @include('percobaan.transition')
+    @include('partials.transition')
 
     <section id="mainContent" class="hidden flex flex-col min-h-screen bg-white">
         <div class="flex-1 overflow-y-auto scroll-smooth">
-            @include('percobaan.opening')
-            @include('percobaan.couple')
-            @include('percobaan.date')
+            @include('partials.opening')
+            @include('partials.couple')
+            @include('partials.date')
+            @include('partials.quotes')
+            @include('partials.barcode')
+            @include('partials.gallery')
+            @include('partials.wedding-gift')
         </div>
-        @include('percobaan.navbar')
+        @include('partials.navbar')
     </section>
 
-    <script src="{{asset('assets_new/js/percobaan.js')}}"></script>
+    <script src="{{asset('assets/js/main.js')}}"></script>
 </body>
 
 </html>

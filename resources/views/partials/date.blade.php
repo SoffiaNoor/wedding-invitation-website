@@ -1,81 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
+<section id="date"
+    class="relative h-screen flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat overflow-hidden px-4 text-center"
+    style="background-image: url('{{ asset('assets/images/background-cream.png') }}');">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <img class="date-flower-1 absolute bottom-0 right-0 lg:w-[20%] md:w-[30%] w-[40%] h-auto z-10"
+        src="{{ asset('assets/images/flower-1.png') }}" alt="flower" />
+    <img class="date-flower-2 absolute lg:top-[80px] top-[-60px] lg:left-[-180px] left-[-100px] lg:w-[30%] md:w-[40%] w-[50%] h-auto z-10"
+        src="{{ asset('assets/images/flower-2.png') }}" alt="flower" />
 
-    <title>Nabila & Zulfi Wedding</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+    <div class="relative z-20 w-full max-w-3xl space-y-4">
+        <h2 class="font-dmSerif text-sm md:text-base lg:text-lg text-[#641b0f]">
+            Majelis Pernikahan akan berlangsung pada
+        </h2>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Monsieur+La+Doulaise&family=Raleway:ital,wght@0,100..900;1,100..900&family=Rouge+Script&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.cdnfonts.com/css/brittany-signature" rel="stylesheet">
-    {{-- <script src="{{asset('assets_new/js/transition.js')}}"></script> --}}
-
-</head>
-
-<body class="relative h-screen overflow-hidden">
-    <div id="date" class="h-screen w-screen flex flex-col items-center justify-center 
-           bg-cover bg-center bg-no-repeat"
-        style="background-image: url('{{ asset('assets_new/images/background-cream.png') }}');">
-        <img class="date-flower-1 absolute bottom-[-50px] right-[-60px] lg:w-[20%] md:w-[40%] w-[50%] h-auto z-20"
-            src="{{ asset('assets_new/images/flower-1.png') }}" alt="flower" />
-        <img class="date-flower-2 absolute lg:top-[100px] top-[-100px] lg:left-[-200px] left-[-100px] lg:w-[35%] md:w-[40%] w-[60%] h-auto z-20"
-            src="{{ asset('assets_new/images/flower-2.png') }}" alt="flower" />
-
-        <div
-            class="absolute lg:top-[170px] md:top-[250px] top-[150px] justify-center text-center mx-auto w-full text-center z-10">
-            <h2 class="font-dmSerif lg:text-2xl md:text-2xl text-xl text-[#641b0f]">
-                Majelis Pernikahan akan berlangsung pada
-            </h2>
-            <div class="lg:mx-20 md:mx-3 mx-2 lg:px-40 text-center lg:mt-10 mt-5">
-                <div class="font-rouge lg:text-7xl text-5xl font-semibold text-[#641b0f]">
-                    Jum’at
-                </div>
-                <div class="font-raleway lg:text-4xl text-2xl text-[#641b0f]">
-                    05.09.2025
-                </div>
-            </div>
-            <div class="lg:mx-20 md:mx-3 mx-2 lg:px-40 text-center lg:mt-10 mt-5">
-                <h2 class="font-dmSerif lg:text-2xl md:text-2xl text-xl text-[#641b0f]">
-                    Akad Nikah:
-                </h2>
-                <div class="font-raleway lg:text-4xl text-2xl text-[#641b0f]">
-                    07.00 - 08.00
-                </div>
-            </div>
-            <img src="{{asset('assets_new/images/line-decor.png')}}"
-                class="lg:w-[20%] w-[70%] h-auto place-self-center mx-auto my-5" />
-            <div class="lg:mx-20 md:mx-3 mx-2 lg:px-40 text-center lg:mt-10 mt-5">
-                <h2 class="font-dmSerif lg:text-2xl md:text-2xl text-xl text-[#641b0f]">
-                    Lokasi Majelis
-                </h2>
-                <div class="font-rouge lg:text-6xl text-4xl font-semibold text-[#641b0f] mt-2">
-                    Gedung Pertemuan Widya Kartika
-                </div>
-                <div class="font-dmSerif lg:text-2xl md:text-2xl text-xl text-[#641b0f] mt-2">
-                    (Jl. Dukuh Kupang Timur XIII No.12, Pakis, Sawahan, Surabaya)
-                </div>
-            </div>
+        <div class="space-y-1">
+            <div class="font-rouge font-bold text-3xl md:text-4xl lg:text-5xl text-[#641b0f]">Jum’at</div>
+            <div class="font-raleway text-sm md:text-base lg:text-lg text-[#641b0f]">05.09.2025</div>
         </div>
 
-        <div
-            class="absolute lg:right-[300px] md:bottom-[200px] bottom-[100px] lg:top-1/2 lg:transform lg:-translate-y-1/2 z-50">
-            <div class="mx-5">
-                <div class="font-dmSerif font-bold uppercase lg:text-2xl text-lg text-center text-[#641b0f]">SCAN QR
-                    LOCATION</div>
-                <img src="{{asset('assets_new/images/barcode.png')}}"
-                    class="date-barcode lg:mt-5 mx-auto lg:w-[70%] w-[50%]" />
+        <div class="space-y-1">
+            <h3 class="font-dmSerif text-sm md:text-base lg:text-lg text-[#641b0f]">Resepsi:</h3>
+            <div class="font-raleway text-sm md:text-base lg:text-lg text-[#641b0f]">09.00 - 11.00</div>
+        </div>
+
+        <img src="{{ asset('assets/images/line-decor.png') }}" class="w-[60%] md:w-[15%] h-auto mx-auto my-1"
+            alt="line" />
+
+        <div class="space-y-1">
+            <h3 class="font-dmSerif text-sm md:text-base lg:text-lg text-[#641b0f]">Lokasi Majelis</h3>
+            <div class="font-rouge font-bold text-2xl md:text-3xl lg:text-4xl text-[#641b0f]">
+                Gedung Pertemuan Widya Kartika
             </div>
+            <div class="font-dmSerif text-sm md:text-base lg:text-lg text-[#641b0f]">
+                (Jl. Dukuh Kupang Timur XIII No.12, Pakis, Sawahan, Surabaya)
+            </div>
+            <a href="https://maps.app.goo.gl/GnmbPiMrJWQZP1yY9?g_st=ipc" target="_blank" class="relative overflow-hidden group text-2xl font-brittany rounded-full 
+          bg-[#fffded] text-[#641b0f] shadow-lg shadow-[#fffded]/20
+          transition-transform duration-300 ease-out hover:scale-105 mt-5 inline-block">
+                <span class="absolute inset-0 bg-gradient-to-r from-red-200 via-white to-red-200
+                 transform -translate-x-full group-hover:translate-x-0
+                 transition-transform duration-500 ease-out"></span>
+
+                <span class="relative z-10 flex items-center gap-2 px-5 py-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17.657 16.657L13.414 12.414a4 4 0 1 0-1.414 1.414l4.243 4.243a1 1 0 0 0 1.414-1.414z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                    </svg>
+                    Click Here for Location
+                </span>
+            </a>
         </div>
     </div>
-
-    @include('pages.navbar')
-</body>
-
-</html>
+</section>

@@ -1,48 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
+<section id="barcode"
+    class="relative h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat overflow-hidden"
+    style="background-image: url('{{ asset('assets/images/background-red.png') }}');">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <img class="barcode-flower-t absolute top-0 lg:w-[25%] w-[40%] h-auto z-20"
+        src="{{ asset('assets/images/flower-on-top.png') }}" alt="flower" />
+    <img class="barcode-flower-r absolute bottom-0 right-0 lg:w-[25%] w-[40%] h-auto z-20"
+        src="{{ asset('assets/images/couple-flower-r.png') }}" alt="flower" />
+    <img class="barcode-flower-l absolute bottom-0 left-0 lg:w-[25%] w-[40%] h-auto z-20"
+        src="{{ asset('assets/images/couple-flower-l.png') }}" alt="flower" />
 
-    <title>Nabila & Zulfi Wedding</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+    <div class="relative z-30 flex flex-col items-center justify-center px-4 text-center w-full max-w-2xl"
+        data-aos="fade-up" data-aos-delay="200">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Monsieur+La+Doulaise&family=Raleway:ital,wght@0,100..900;1,100..900&family=Rouge+Script&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.cdnfonts.com/css/brittany-signature" rel="stylesheet">
-    {{-- <script src="{{asset('assets_new/js/transition.js')}}"></script> --}}
+        <h2 class="font-dmSerif text-white text-lg sm:text-xl md:text-2xl lg:text-3xl leading-relaxed">
+            Barcode <br class="hidden sm:block">
+            to enter our wedding
+        </h2>
 
-</head>
-
-<body class="relative h-screen overflow-hidden">
-    <div id="couple" class="h-screen w-screen flex flex-col items-center justify-center 
-           bg-cover bg-center bg-no-repeat"
-        style="background-image: url('{{ asset('assets_new/images/background-red.png') }}');">
-        <img class="absolute top-0 w-[30%] h-auto z-20" src="{{ asset('assets_new/images/flower-on-top.png') }}"
-            alt="flower" />
-        <img class="absolute bottom-0 right-0 w-[30%] h-auto z-20"
-            src="{{ asset('assets_new/images/couple-flower-r.png') }}" alt="flower" />
-        <img class="absolute bottom-0 left-0 w-[30%] h-auto z-20"
-            src="{{ asset('assets_new/images/couple-flower-l.png') }}" alt="flower" />
-
-
-        <div class="absolute top-[220px] w-full text-center z-10">
-            <h2 class="font-dmSerif text-4xl text-white">
-                Barcode </br>
-                to enter our wedding
-            </h2>
-            <div class="mx-5 mt-10">
-                <img src="{{asset('assets_new/images/barcode2.png')}}" class="mx-auto" />
-            </div>
+        <div class="mt-6 sm:mt-8 md:mt-10" data-aos="zoom-in" data-aos-delay="400">
+            <img src="{{ asset('assets/images/barcode2.png') }}"
+                class="mx-auto w-[160px] sm:w-[200px] md:w-[240px] lg:w-[280px] max-w-full" alt="barcode" />
         </div>
+
+        <p class="mt-6 font-dmSerif text-white text-sm sm:text-base md:text-lg opacity-80" data-aos="fade-up"
+            data-aos-delay="600">
+            Show this barcode at the venue entrance
+        </p>
     </div>
-
-    @include('pages.navbar')
-</body>
-
-</html>
+</section>

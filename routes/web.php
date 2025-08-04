@@ -16,16 +16,9 @@ use Illuminate\Support\Facades\Route;
 // Route::post('/scan', [AttendanceController::class, 'record'])
 //     ->name('attendance.record');
 
+
 Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/v2', function () {
-    return view('welcome-2');
-});
-
-Route::get('/percobaan', function () {
-    return view('percobaan');
+    return view('home');
 });
 
 Route::get('/clear-cache', function () {
@@ -33,32 +26,4 @@ Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');
     Artisan::call('config:cache');
     return 'Cache and config cleared!';
-});
-
-Route::get('/opening', function () {
-    return view('partials.opening');
-});
-
-Route::get('/couple', function () {
-    return view('partials.couple');
-});
-
-Route::get('/date', function () {
-    return view('partials.date');
-});
-
-Route::get('/quotes', function () {
-    return view('partials.quotes');
-});
-
-Route::get('/barcode', function () {
-    return view('partials.barcode');
-});
-
-Route::get('/gallery', function () {
-    return view('partials.gallery');
-});
-
-Route::get('/wedding-gift', function () {
-    return view('partials.wedding-gift');
 });
