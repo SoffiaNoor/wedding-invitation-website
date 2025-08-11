@@ -54,8 +54,13 @@
       .then(cameras => {
         if (!cameras.length) throw new Error('No camera found');
 
-        const cameraId = cameras[0].id;
-        const qrCodeScanner = new Html5Qrcode(readerEl.id, /* verbose= */ false);
+        let backCamera = cameras.find(cam => /back|rear|environment/i.test(cam.label));
+        if (!backCamera && cameras.length > 1) {
+          backCamera = cameras[1];
+        }
+        const cameraId = (backCamera || cameras[0]).id;
+
+        const qrCodeScanner = new Html5Qrcode(readerEl.id, false);
 
         const onScanSuccess = async (decodedText, decodedResult) => {
           const now = Date.now();
