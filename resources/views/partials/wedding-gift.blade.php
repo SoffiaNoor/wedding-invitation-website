@@ -32,7 +32,7 @@
             data-aos="fade-up">
             Doa restu Anda adalah anugerah terindah. Jika berkenan, kami menyediakan pilihan hadiah secara cashless.
         </div>
-        <img class="mx-auto my-2 lg:w-[40%] w-[60%]" src="{{ asset('assets/images/qris-wedding.png') }}" />
+        <img class="mx-auto my-2 lg:w-[40%] w-[60%]" src="{{ asset('assets/images/qris-wedding2.png') }}" />
     </div>
 </section>
 
