@@ -22,7 +22,7 @@
             <div class="font-raleway text-sm md:text-base lg:text-lg text-[#641b0f]">09.00 - 11.00</div>
         </div>
 
-        <img src="{{ asset('assets/images/line-decor.png') }}" class="w-[60%] md:w-[15%] h-auto mx-auto my-1"
+        <img src="{{ asset('assets/images/line-decor.png') }}" class="date-line-decor w-[60%] md:w-[15%] h-auto mx-auto my-1"
             alt="line" />
 
         <div class="space-y-1">

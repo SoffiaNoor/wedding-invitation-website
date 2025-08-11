@@ -13,16 +13,33 @@
             x-model="search">
     </div>
     <div class="flex-1 overflow-x-auto">
-        <div x-show="alertMessage" x-transition:enter="transform ease-out duration-300 transition"
-            x-transition:enter-start="translate-y-[-10px] opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
-            x-transition:leave="transform ease-in duration-300 transition"
-            x-transition:leave-start="translate-y-0 opacity-100" x-transition:leave-end="translate-y-[-10px] opacity-0"
-            :class="{
-        'bg-green-600': alertType === 'success',
-        'bg-red-600': alertType === 'error',
-        'bg-blue-600': alertType === 'info'
-    }" class="fixed top-5 right-5 text-white px-4 py-3 rounded-lg shadow-lg z-50 font-semibold tracking-wide"
-            x-text="alertMessage">
+        <div x-show="alertMessage" x-transition:enter="transform ease-out duration-300"
+            x-transition:enter-start="translate-y-[-8px] opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
+            x-transition:leave="transform ease-in duration-300" x-transition:leave-start="translate-y-0 opacity-100"
+            x-transition:leave-end="translate-y-[-8px] opacity-0" :class="{
+    'bg-green-600': alertType === 'success',
+    'bg-red-600':   alertType === 'error',
+    'bg-blue-600':  alertType === 'info'
+  }" role="alert" :aria-live="alertType === 'error' ? 'assertive' : 'polite'" class="fixed z-50 px-4 py-3 rounded-lg shadow-lg font-semibold tracking-wide text-white
+         left-4 right-4 mx-auto max-w-xl
+         sm:left-auto sm:right-5 sm:top-5 sm:max-w-md
+         text-sm sm:text-base
+         pointer-events-auto" style="top: calc(env(safe-area-inset-top, 0px) + 0.75rem);">
+            <div class="flex items-start gap-3">
+                <div class="flex-1">
+                    <span x-text="alertMessage" class="block break-words"></span>
+                </div>
+
+                <button type="button" @click="alertMessage = null" aria-label="Close alert"
+                    class="ml-2 inline-flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 p-1.5 focus:outline-none focus:ring-2 focus:ring-white/40">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"
+                        aria-hidden="true">
+                        <path fill-rule="evenodd"
+                            d="M10 8.586l4.95-4.95 1.414 1.414L11.414 10l4.95 4.95-1.414 1.414L10 11.414l-4.95 4.95-1.414-1.414L8.586 10 3.636 5.05 5.05 3.636 10 8.586z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <table class="min-w-full bg-white rounded-2xl shadow-lg overflow-hidden">

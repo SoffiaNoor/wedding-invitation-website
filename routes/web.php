@@ -32,5 +32,10 @@ Route::get('/clear-cache', function () {
     return 'Cache and config cleared!';
 });
 
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});
+
+
 Route::get('{slug}', [InvitationController::class, 'show'])
     ->name('invitations.show');

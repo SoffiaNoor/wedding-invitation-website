@@ -47,23 +47,40 @@ openBtn.addEventListener("click", () => {
         .to("#transition", { opacity: 1, duration: 0.5, ease: "power2.out" })
         .fromTo("#transition-img", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.5)" })
         .fromTo("#ground", { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "+=0.2")
-        .fromTo("#bride", { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "+=0.2")
-        .fromTo(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower"], {
+        .fromTo(
+            "#bride",
+            { y: 40, scale: 0.85, opacity: 0, transformOrigin: "50% 100%" },
+            { y: 0, scale: 1, opacity: 1, duration: 1.4, ease: "back.out(1.0)" },
+            "+=0.2"
+        )
+        .set("#cloud", { left: "-100px", bottom: "200px", opacity: 0 })
+        .set("#cloud2", { left: "-500px", top: "100px", opacity: 0 })
+
+        .to("#cloud", {
+            left: "calc(10% + 100px)",
+            bottom: "700px",
+            opacity: 1,
+            duration: 1,
+            ease: "power1.inOut"
+        }, "+=0")
+
+        .to("#cloud2", {
+            left: "calc(50% + 200px)",
+            top: "0px",
+            opacity: 1,
+            duration: 1,
+            ease: "power1.inOut"
+        }, "<")
+
+        .to(["#cloud", "#cloud2"], { y: "+=8", duration: 2, yoyo: true, repeat: -1, ease: "sine.inOut" }, "-=0.2")
+        .fromTo(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower", "#leftLeaf3", "#rightLeaf3"], {
             y: 100, opacity: 0
         }, {
-            y: 0, opacity: 1, duration: 1, ease: "power3.out"
-        }, "+=0.2")
-        .to(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower"], {
+            y: 0, opacity: 1, duration: 0.5, ease: "power3.out"
+        }, "-=2.5")
+        .to(["#leftLeaf", "#leftLeaf2", "#rightLeaf", "#rightLeaf2", "#leftFlower", "#rightFlower", "#leftLeaf3", "#rightLeaf3"], {
             rotate: 10, duration: 1, yoyo: true, repeat: -1, ease: "sine.inOut"
-        }, "-=0.8")
-        .fromTo(["#leftLeaf3", "#rightLeaf3"], {
-            y: 100, opacity: 0
-        }, {
-            y: 0, opacity: 1, duration: 1, ease: "power3.out"
-        }, "+=0.2")
-        .to(["#leftLeaf3", "#rightLeaf3"], {
-            rotate: 0, duration: 1, yoyo: true, repeat: -1, ease: "sine.inOut"
-        }, "-=0.8")
+        }, "-=0")
         .set("#birds", {
             left: "-200px",
             bottom: "200px",

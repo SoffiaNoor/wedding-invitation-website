@@ -43,10 +43,15 @@
         class="lg:w-[30%] w-[50%] h-auto bottom-[-300px] right-[200px] absolute opacity-0 -rotate-[10deg]" />
 
     <button id="skip-button" class="font-brittany fixed sm:bottom-4 sm:right-4 bottom-2 right-2
-           bg-[#641b0f] text-white text-xs sm:text-sm md:text-base
-           px-3 py-1.5 sm:px-4 sm:py-2
-           rounded-full shadow-lg
-           hover:bg-[#843326] transition-colors z-50">
-        Skip
+         bg-[#641b0f] text-white text-lg lg:text-md
+         px-6 lg:px-4 py-2 rounded-full shadow-lg
+         hover:bg-[#843326] transition-colors z-50
+         flex items-center gap-3" aria-label="Skip" title="Skip">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+
+        <span>Skip</span>
     </button>
 </div>

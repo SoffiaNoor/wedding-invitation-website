@@ -11,7 +11,7 @@
     <img class="gallery-flower-l absolute lg:bottom-[-80px] bottom-0 lg:left-[-120px] left-0 lg:w-[25%] md:w-[25%] w-[35%] h-auto z-20"
         src="{{ asset('assets/images/gallery-flower-l.png') }}" alt="flower" />
 
-    <div class="relative z-10 flex flex-col items-center justify-center text-center px-4 w-full max-w-6xl">
+    <div class="relative z-10 flex flex-col items-center justify-center text-center px-10 py-20 w-full max-w-6xl">
         <h2 class="font-brittany text-white text-3xl md:text-4xl lg:text-5xl mb-8 leading-tight">
             Piece of our Memories
         </h2>
