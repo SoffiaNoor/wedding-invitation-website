@@ -20,26 +20,54 @@
         rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/brittany-signature" rel="stylesheet">
 
+    
     <link rel="stylesheet" href="{{ asset('assets/css/build.css') }}">
     <script src="{{ asset('assets/js/build.js') }}"></script>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+
 </head>
 
-<body class="antialiased bg-cover bg-center text-gray-700 flex flex-col min-h-screen"
+<body x-data="{ showImportModal: false }"
+    class="antialiased bg-cover bg-center text-gray-700 flex flex-col min-h-screen"
     style="background-image: url('{{ asset('assets/images/background-cream.png') }}');">
 
-    {{-- Navbar --}}
-    <nav x-data="{ open: false }"
-        class="bg-white/30 backdrop-blur-lg border-b border-white/30 shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div x-show="showImportModal" x-cloak x-transition
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div @click.away="showImportModal = false" class="bg-white p-6 m-6 rounded-xl shadow-xl w-full max-w-md">
+            <h2 class="text-lg font-bold mb-4 font-dmSerif text-[#641b0f]">Import Daftar Tamu</h2>
+            <form action="{{ route('invitations.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="file" name="file" class="mb-4 w-full border rounded p-2" required>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" @click="showImportModal = false"
+                        class="px-4 py-2 bg-gray-200 rounded font-dmSerif">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-[#641b0f] text-white rounded font-dmSerif">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <nav x-data="{ open: false }" x-cloak
+        class="bg-white/30 backdrop-blur-lg border-b border-white/30 shadow-lg sticky top-0 z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center h-16">
-                {{-- Brand --}}
                 <a href="{{ url('/invitations') }}"
                     class="text-2xl font-brittany font-extrabold text-[#641b0f] transition">
                     Nabila & Zulfi Wedding
                 </a>
 
-                {{-- Desktop Links --}}
                 <div class="hidden md:flex space-x-4">
+                    <a href="javascript:void(0)" @click="showImportModal = true"
+                        class="relative overflow-hidden group rounded-full text-sm font-medium font-dmSerif bg-transparent text-[#641b0f] transition-transform duration-300 ease-out hover:scale-105">
+                        <span
+                            class="absolute inset-0 bg-gradient-to-r from-red-200 via-white to-red-200 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
+                        <span class="relative z-10 block px-6 py-2">Import Daftar Tamu</span>
+                    </a>
                     @php
                     $links = [
                     ['label' => 'Daftar Tamu', 'route' => route('invitations.index')],
@@ -60,7 +88,6 @@
                     @endforeach
                 </div>
 
-                {{-- Mobile menu button --}}
                 <button @click="open = !open"
                     class="md:hidden p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-200 text-gray-700">
                     <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
@@ -77,7 +104,6 @@
             </div>
         </div>
 
-        {{-- Mobile Menu --}}
         <div x-show="open" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
@@ -85,6 +111,14 @@
             class="md:hidden bg-[#fffded] border-t border-white/20 shadow-inner">
 
             <div class="px-4 py-4 space-y-3">
+                <a href="javascript:void(0)" @click="showImportModal = true" class="relative overflow-hidden group block text-center text-sm font-medium font-dmSerif
+                       bg-[#fffded] text-[#641b0f]
+                       hover:scale-[1.02] hover:shadow-lg transition-all duration-300 ease-out">
+                    <span class="absolute inset-0 bg-gradient-to-r from-red-200 via-white to-red-200
+                             transform -translate-x-full group-hover:translate-x-0
+                             transition-transform duration-500 ease-out opacity-20 rounded-full"></span>
+                    <span class="relative z-10 block px-5 py-2.5">Import Daftar Tamu</span>
+                </a>
                 @php
                 $links = [
                 ['label' => 'Daftar Tamu', 'route' => route('invitations.index')],
@@ -108,7 +142,6 @@
     </nav>
 
 
-    {{-- Main Content --}}
     <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
         @if(session('success'))
         <div
@@ -120,12 +153,11 @@
         </div>
         @endif
 
-        <div class="bg-white/30 backdrop-blur-lg border-b border-white/30 shadow-lg rounded-2xl shadow-xl p-8">
+        <div class="bg-white shadow-lg rounded-2xl shadow-xl p-8">
             @yield('content')
         </div>
     </main>
 
-    {{-- Footer --}}
     <footer class="relative bg-white/30 backdrop-blur-lg border-t border-white/40 shadow-inner">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-gray-600 relative z-10">
             <div class="text-xs font-dmSerif text-gray-500">
@@ -133,11 +165,6 @@
                     Wedding</span>.
                 All rights reserved.
             </div>
-        </div>
-
-        {{-- Optional decorative element --}}
-        <div class="absolute inset-0 opacity-10 pointer-events-none"
-            style="background-image: url('{{ asset('assets_new/images/footer-decor.png') }}'); background-repeat: no-repeat; background-position: center; background-size: cover;">
         </div>
     </footer>
 

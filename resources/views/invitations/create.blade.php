@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="min-h-screen flex bg-transparent">
-    <div class="w-full max-w-full rounded-2xl p-8">
+    <div class="w-full max-w-full rounded-2xl p-2">
         <h2 class="text-3xl font-dmSerif font-semibold text-[#641b0f] mb-6">
             Tambah Tamu Undangan
         </h2>

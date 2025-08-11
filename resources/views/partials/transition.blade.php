@@ -42,4 +42,11 @@
     <img id="rightLeaf3" src="{{asset('assets/images/daun-kanan.png')}}"
         class="lg:w-[30%] w-[50%] h-auto bottom-[-300px] right-[200px] absolute opacity-0 -rotate-[10deg]" />
 
+    <button id="skip-button" class="font-brittany fixed sm:bottom-4 sm:right-4 bottom-2 right-2
+           bg-[#641b0f] text-white text-xs sm:text-sm md:text-base
+           px-3 py-1.5 sm:px-4 sm:py-2
+           rounded-full shadow-lg
+           hover:bg-[#843326] transition-colors z-50">
+        Skip
+    </button>
 </div>

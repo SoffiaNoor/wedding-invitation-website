@@ -21,18 +21,19 @@
         src="{{ asset('assets/images/flower4.png') }}" alt="flower" data-aos="zoom-in" />
 
     <div
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-screen-md px-4 text-center z-10">
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-screen-md px-4 text-center">
 
-        <h2 class="wedding-gift-title font-brittany text-3xl sm:text-5xl md:text-6xl text-[#641b0f] mb-6"
+        <h2 class="wedding-gift-title font-brittany text-3xl sm:text-5xl md:text-6xl text-[#641b0f] mb-6 z-10"
             data-aos="fade-down">
             Wedding Gift
         </h2>
 
-        <div class="wedding-gift-text font-dmSerif text-sm md:text-base lg:text-lg text-[#641b0f] leading-relaxed mt-5"
+        <div class="wedding-gift-text font-dmSerif text-sm md:text-base lg:text-lg text-[#641b0f] leading-relaxed mt-5 z-10"
             data-aos="fade-up">
-            Doa restu Anda adalah anugerah terindah bagi kami.
-            Dan apabila Bapak/Ibu berkenan mengungkapkan tanda kasih melalui hadiah,
-            kami juga menyediakan pilihan pemberian secara cashless.
+            Doa restu Anda adalah anugerah terindah. Jika berkenan, kami menyediakan pilihan hadiah secara cashless.
         </div>
+        <img class="mx-auto my-2 lg:w-[40%] w-[60%]" src="{{ asset('assets/images/qris-wedding.png') }}" />
     </div>
 </section>
+
+@include('partials.footer')

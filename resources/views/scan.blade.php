@@ -22,41 +22,128 @@
     const messageEl = document.getElementById('message');
     const readerEl = document.getElementById('reader');
 
+    const DEBOUNCE_MS = 800; 
+    const lastScanTimestamps = {};
+    let processing = false; 
+
+    const beep = (() => {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        return () => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'sine';
+          o.frequency.value = 900;
+          g.gain.value = 0.1;
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.start();
+          setTimeout(() => { o.stop(); }, 120);
+        };
+      } catch (e) {
+        return () => {};
+      }
+    })();
+
+    const flash = (color = 'rgba(34,197,94,0.12)') => {
+      readerEl.style.boxShadow = `0 0 0 9999px ${color} inset`;
+      setTimeout(() => { readerEl.style.boxShadow = ''; }, 140);
+    };
+
     Html5Qrcode.getCameras()
       .then(cameras => {
         if (!cameras.length) throw new Error('No camera found');
-        const qrCodeScanner = new Html5Qrcode(readerEl.id);
+
+        const cameraId = cameras[0].id;
+        const qrCodeScanner = new Html5Qrcode(readerEl.id, /* verbose= */ false);
+
+        const onScanSuccess = async (decodedText, decodedResult) => {
+          const now = Date.now();
+
+          if (lastScanTimestamps[decodedText] && (now - lastScanTimestamps[decodedText]) < DEBOUNCE_MS) {
+            return;
+          }
+          lastScanTimestamps[decodedText] = now;
+
+          if (processing) {
+            return;
+          }
+          processing = true;
+
+          messageEl.textContent = 'Memproses...';
+          messageEl.classList.remove('text-red-600', 'text-green-600', 'text-yellow-600');
+          messageEl.classList.add('text-gray-700');
+
+          if (navigator.vibrate) navigator.vibrate(60);
+          flash('rgba(59,130,246,0.12)');
+
+          try {
+            const res = await fetch("{{ route('scan') }}", {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+              },
+              body: JSON.stringify({ code: decodedText })
+            });
+
+            let data;
+            try {
+              data = await res.json();
+            } catch (e) {
+              data = { status: 'error', message: 'Response bukan JSON' };
+            }
+
+            if (res.ok && data.status === 'ok') {
+              messageEl.textContent = data.message || 'Tamu terdaftar — Checked in';
+              messageEl.classList.remove('text-red-600');
+              messageEl.classList.add('text-green-600');
+              beep();
+              flash('rgba(16,185,129,0.12)');
+            } else if (res.ok && (data.status === 'already' || data.status === 'already_scanned')) {
+              messageEl.textContent = data.message || 'Sudah discan sebelumnya';
+              messageEl.classList.remove('text-green-600');
+              messageEl.classList.add('text-yellow-600');
+              beep(); 
+              flash('rgba(234,179,8,0.12)'); 
+            } else {
+              messageEl.textContent = data.message || 'Gagal memproses kode';
+              messageEl.classList.remove('text-green-600');
+              messageEl.classList.add('text-red-600');
+              flash('rgba(220,38,38,0.12)'); 
+            }
+          } catch (err) {
+            console.error('Fetch error:', err);
+            messageEl.textContent = 'Terjadi kesalahan koneksi';
+            messageEl.classList.remove('text-green-600');
+            messageEl.classList.add('text-red-600');
+            flash('rgba(220,38,38,0.12)');
+          } finally {
+            processing = false;
+          }
+        };
+
+        const onScanFailure = (error) => {
+        };
 
         qrCodeScanner.start(
-          { facingMode: 'environment' },
-          { fps: 10, formatsToSupport: [ Html5QrcodeSupportedFormats.QRCODE ] },
-          async (decodedText) => {
-            try {
-              const response = await fetch("{{ route('scan') }}", {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ code: decodedText })
-              });
-              const data = await response.json();
-              messageEl.textContent = data.message;
-              messageEl.classList.toggle('text-green-600', data.status === 'ok');
-              messageEl.classList.toggle('text-red-600', data.status !== 'ok');
-            } catch (err) {
-              console.error('Fetch error:', err);
-              messageEl.textContent = 'Terjadi kesalahan. Coba lagi.';
-              messageEl.classList.add('text-red-600');
-            } finally {
-              await qrCodeScanner.stop();
-            }
-          }
-        );
+          { deviceId: { exact: cameraId } },
+          { fps: 10, qrbox: { width: 300, height: 200 }, aspectRatio: 1.78 },
+          onScanSuccess,
+          onScanFailure
+        ).catch(err => {
+          console.error('QR start error:', err);
+          messageEl.textContent = 'Gagal memulai scanner. Periksa izin kamera.';
+          messageEl.classList.add('text-red-600');
+        });
+
+        window.addEventListener('beforeunload', async () => {
+          try { await qrCodeScanner.stop(); } catch(e) {}
+        });
+
       })
       .catch(err => {
         console.error('QR init error:', err);
-        const messageEl = document.getElementById('message');
         messageEl.textContent = 'Tidak dapat mengakses kamera.';
         messageEl.classList.add('text-red-600');
       });

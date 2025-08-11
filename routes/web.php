@@ -7,11 +7,20 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 // Admin Features
+Route::get('/print-barcode/{slug}', [InvitationController::class, 'printBarcode'])
+    ->name('invitations.print');
+
 Route::get('/invitations/export', [InvitationController::class, 'export'])
     ->name('invitations.export');
 
+Route::post('/invitations/import', [InvitationController::class, 'import'])
+    ->name('invitations.import');
+
 Route::resource('invitations', InvitationController::class)
     ->except(['edit', 'update', 'destroy', 'show']);
+
+Route::post('/invitations/{invitation}/check-in', [InvitationController::class, 'checkIn'])
+    ->name('invitations.checkin');
 
 Route::get('scan', fn() => view('scan'))->name('scan.form');
 Route::post('scan', [ScanController::class, 'scan'])->name('scan');

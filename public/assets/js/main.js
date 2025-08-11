@@ -6,6 +6,25 @@ const mainContent = document.getElementById('mainContent');
 openBtn.addEventListener("click", () => {
     transition.classList.remove('hidden');
 
+    const skipBtn = document.getElementById('skip-button');
+
+    skipBtn.addEventListener("click", () => {
+        gsap.globalTimeline.clear();
+
+        landing.classList.add('hidden');
+        transition.classList.add('hidden');
+        mainContent.classList.remove('hidden');
+
+        showSection("opening");
+        animateSectionContent("opening");
+        animateSectionContent("date");
+        animateSectionContent("quotes");
+        animateSectionContent("barcode");
+        animateSectionContent("gallery");
+        animateSectionContent("wedding-gift");
+    });
+
+
     const tl = gsap.timeline();
 
     tl.to("#landing", {

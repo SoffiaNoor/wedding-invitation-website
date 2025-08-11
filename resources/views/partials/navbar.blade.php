@@ -7,8 +7,8 @@
 
     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
            flex flex-col items-center justify-center 
-           group-hover:opacity-0 group-hover:scale-90 
-           transition-all duration-700 ease-in-out">
+           group-hover:opacity-0 group-hover:scale-90 group-hover:pointer-events-none
+           transition-all duration-700 ease-in-out z-10">
 
         <div class="font-dmSerif text-[#651d0b] rounded-full px-4 py-2 
                transition-all duration-500 group-hover:scale-90 flex flex-col items-center justify-center">
@@ -21,7 +21,7 @@
     </div>
 
     <div
-        class="flex items-center gap-x-6 px-4 overflow-x-auto whitespace-nowrap scrollbar-hide opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out">
+        class="flex items-center gap-x-6 px-4 overflow-x-auto whitespace-nowrap scrollbar-hide opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out z-20">
         <button onclick="scrollToSection('opening')"
             class="font-dmSerif text-[#651d0b] flex flex-col items-center text-sm hover:scale-105 hover:text-[#641b0f] transition duration-300">
             <svg xmlns=" http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
