@@ -114,12 +114,25 @@ class InvitationController extends Controller
 
     public function import(Request $request)
     {
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv'
-        ]);
+        $request->validate(['file' => 'required|file|mimes:xlsx,xls,csv']);
 
         $file = $request->file('file');
-        $spreadsheet = IOFactory::load($file->getRealPath());
+
+        $saved = $file->storeAs('imports', uniqid() . '_' . $file->getClientOriginalName());
+        $fullPath = storage_path('app/' . $saved);
+
+        if (!file_exists($fullPath) || filesize($fullPath) === 0) {
+            return back()->with('error', 'Uploaded file could not be read or is empty.');
+        }
+
+        try {
+            $reader = IOFactory::createReaderForFile($fullPath);
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($fullPath);
+        } catch (\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
+            return back()->with('error', 'Failed to read spreadsheet: ' . $e->getMessage());
+        }
+
         $sheetNames = $spreadsheet->getSheetNames();
 
         $summary = [
