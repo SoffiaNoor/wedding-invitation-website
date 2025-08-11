@@ -18,93 +18,47 @@
 @push('scripts')
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-  const messageEl = document.getElementById('message');
-  const readerEl = document.getElementById('reader');
+  document.addEventListener('DOMContentLoaded', async () => {
+    const messageEl = document.getElementById('message');
+    const readerEl = document.getElementById('reader');
 
-  const DEBOUNCE_MS = 800;
-  const lastScanTimestamps = {};
-  let processing = false;
+    let qrCodeScanner;
+    let isProcessing = false;       // prevents concurrent fetches
+    let lastDecoded = null;         // simple duplicate filter
+    const DUPLICATE_COOLDOWN = 2000; // ms - ignore same code within this time
+    let lastTime = 0;
 
-  // AudioContext handling (resume on first user interaction for mobile)
-  let audioCtx = null;
-  const getAudioCtx = () => {
-    if (!audioCtx) {
-      try {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      } catch (e) {
-        audioCtx = null;
-      }
-    }
-    return audioCtx;
-  };
-  document.addEventListener('click', () => {
-    const ctx = getAudioCtx();
-    if (ctx && ctx.state === 'suspended') ctx.resume();
-  }, { once: true });
-
-  const beep = (() => {
-    return () => {
-      const ctx = getAudioCtx();
-      if (!ctx) return;
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = 'sine';
-      o.frequency.value = 900;
-      g.gain.value = 0.06;
-      o.connect(g);
-      g.connect(ctx.destination);
-      o.start();
-      setTimeout(() => { o.stop(); }, 120);
+    const showMessage = (text, ok = true) => {
+      messageEl.textContent = text;
+      messageEl.classList.toggle('text-green-600', ok);
+      messageEl.classList.toggle('text-red-600', !ok);
     };
-  })();
 
-  const flash = (color = 'rgba(34,197,94,0.12)') => {
-  readerEl.style.boxShadow = `0 0 0 9999px ${color} inset`;
-  setTimeout(() => {
-    readerEl.style.boxShadow = '';
-  }, 140);
-};
+    try {
+      const cameras = await Html5Qrcode.getCameras();
+      if (!cameras || cameras.length === 0) throw new Error('No camera found');
 
-  const showMessage = (text, colorClass = 'text-gray-700') => {
-    messageEl.textContent = text;
-    messageEl.classList.remove('text-red-600','text-green-600','text-yellow-600','text-gray-700');
-    messageEl.classList.add(colorClass);
-  };
+      // Prefer back/rear/environment camera if available (works better on phones)
+      const backCamera = cameras.find(c => /back|rear|environment/i.test(c.label)) || cameras[0];
 
-  const qrCodeScanner = new Html5Qrcode(readerEl.id, /* verbose= */ false);
+      qrCodeScanner = new Html5Qrcode(readerEl.id);
 
-  Html5Qrcode.getCameras()
-    .then(cameras => {
-      console.log('Cameras found:', cameras);
-      if (!cameras || !cameras.length) throw new Error('No camera found');
-
-      // prefer explicit facingMode config on phones; fallback to deviceId
-      let chosenConfig = { facingMode: { ideal: "environment" } };
-
-      // Try to guess a back camera by label if available
-      const backCamera = cameras.find(cam => /back|rear|environment/i.test(cam.label));
-      if (backCamera && backCamera.id) {
-        // On some phones using deviceId works fine; keep it as fallback
-        chosenConfig = { deviceId: { exact: backCamera.id } };
-        console.log('Using deviceId for camera:', backCamera);
-      } else {
-        console.log('Using facingMode environment fallback');
-      }
-
-      const onScanSuccess = async (decodedText, decodedResult) => {
+      const qrSuccess = async (decodedText /*, decodedResult */) => {
         const now = Date.now();
-        if (lastScanTimestamps[decodedText] && (now - lastScanTimestamps[decodedText]) < DEBOUNCE_MS) return;
-        lastScanTimestamps[decodedText] = now;
-        if (processing) return;
-        processing = true;
 
-        showMessage('Memproses...', 'text-gray-700');
-        if (navigator.vibrate) navigator.vibrate(60);
-        flash('rgba(59,130,246,0.12)');
+        // Ignore duplicate results very quickly in a row
+        if (decodedText === lastDecoded && (now - lastTime) < DUPLICATE_COOLDOWN) {
+          return;
+        }
+        lastDecoded = decodedText;
+        lastTime = now;
+
+        // Prevent overlapping requests
+        if (isProcessing) return;
+        isProcessing = true;
 
         try {
-          const res = await fetch("{{ route('scan') }}", {
+          const response = await fetch("{{ route('scan') }}", {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -113,84 +67,45 @@
             body: JSON.stringify({ code: decodedText })
           });
 
-          let data;
-          try { data = await res.json(); } catch (e) { data = { status: 'error', message: 'Response bukan JSON' }; }
+          const data = await response.json();
+          showMessage(data.message || 'Scanned', data.status === 'ok');
 
-          if (res.ok && data.status === 'ok') {
-            showMessage(data.message || 'Tamu terdaftar — Checked in', 'text-green-600');
-            beep();
-            flash('rgba(16,185,129,0.12)');
-          } else if (res.ok && (data.status === 'already' || data.status === 'already_scanned')) {
-            showMessage(data.message || 'Sudah discan sebelumnya', 'text-yellow-600');
-            beep();
-            flash('rgba(234,179,8,0.12)');
-          } else {
-            showMessage(data.message || 'Gagal memproses kode', 'text-red-600');
-            flash('rgba(220,38,38,0.12)');
-          }
         } catch (err) {
           console.error('Fetch error:', err);
-          showMessage('Terjadi kesalahan koneksi', 'text-red-600');
-          flash('rgba(220,38,38,0.12)');
+          showMessage('Terjadi kesalahan. Coba lagi.', false);
         } finally {
-          processing = false;
+          // DO NOT stop the scanner here — we want unlimited scanning.
+          isProcessing = false;
         }
       };
 
-      const onScanFailure = (error) => {
-        // show minimal feedback — verbose logs to console for debugging
-        console.debug('scan failure:', error);
-        // optional: show message if repeated failures happen (not every frame)
-      };
-
-      // Use smaller qrbox on phones (detect mobile)
-      const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-      const qrbox = isMobile ? { width: 220, height: 140 } : { width: 300, height: 200 };
-
-      qrCodeScanner.start(
-        chosenConfig,
-        onScanSuccess,
-        onScanFailure
-      ).then(() => {
-        console.log('QR scanner started with config', chosenConfig);
-        showMessage('Arahkan kamera ke QR code', 'text-gray-700');
-      }).catch(err => {
-        console.error('QR start error:', err);
-        // Show more helpful error to user
-        if (err && err.name === 'NotAllowedError') {
-          showMessage('Izin kamera ditolak — izinkan kamera di pengaturan browser.', 'text-red-600');
-        } else if (err && err.message && err.message.includes('unsupported constraint')) {
-          showMessage('Kamera tidak mendukung konfigurasi yang diminta. Mencoba fallback...', 'text-yellow-600');
-          // if deviceId failed, try facingMode fallback
-          if (chosenConfig.deviceId) {
-            qrCodeScanner.start({ facingMode: { ideal: "environment" } }, cfg, onScanSuccess, onScanFailure)
-              .then(() => showMessage('Arahkan kamera ke QR code', 'text-gray-700'))
-              .catch(e => {
-                console.error('Fallback start error:', e);
-                showMessage('Gagal memulai kamera.', 'text-red-600');
-              });
-          }
-        } else {
-          showMessage('Gagal memulai scanner. Periksa izin kamera dan koneksi (HTTPS).', 'text-red-600');
+      // Start the camera using the camera id (more reliable on mobile)
+      await qrCodeScanner.start(
+        backCamera.id, // pass device id to ensure back camera on mobiles
+        {
+          fps: 10,
+          // qrbox helps with performance and UI; it's responsive to the reader size
+          qrbox: {
+            width: Math.min(320, readerEl.clientWidth - 20),
+            height: Math.min(320, readerEl.clientHeight - 20)
+          },
+          // support only QR codes
+          formatsToSupport: [ Html5QrcodeSupportedFormats.QRCODE ]
+        },
+        qrSuccess,
+        (errorMessage) => {
+          // Optional per-frame error callback (useful for debugging)
+          // console.debug('QR frame error:', errorMessage);
         }
-      });
+      );
 
-      // stop scanner when leaving
-      window.addEventListener('beforeunload', async () => {
-        try { await qrCodeScanner.stop(); } catch(e) {}
-      });
+      // Optional: expose stop/start controls if you want to manually stop/resume
+      window._qrCodeScanner = qrCodeScanner;
 
-    })
-    .catch(err => {
+    } catch (err) {
       console.error('QR init error:', err);
-      // Be explicit to user
-      if (err && err.name === 'NotAllowedError') {
-        showMessage('Izin kamera ditolak — izinkan kamera di browser.', 'text-red-600');
-      } else {
-        showMessage('Tidak dapat mengakses kamera. Pastikan halaman diakses via HTTPS dan berikan izin.', 'text-red-600');
-      }
-    });
-});
+      showMessage('Tidak dapat mengakses kamera.', false);
+    }
+  });
 </script>
-
 @endpush
