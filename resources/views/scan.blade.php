@@ -2,30 +2,15 @@
 
 @section('content')
 <div class="min-h-screen flex items-center justify-center">
-  <div class="w-full max-w-lg p-6">
-    <h2 class="text-2xl font-dmSerif font-semibold text-[#641b0f] mb-4 text-center">
+  <div class="w-full max-w-md p-6">
+    <h2 class="text-2xl font-dmSerif font-semibold text-[#641b0f] mb-6 text-center">
       Scan Barcode Undangan
     </h2>
 
-    <div class="mb-4 flex gap-2 items-center justify-center">
-      <select id="cameraSelect" class="p-2 border rounded" style="min-width:200px;">
-        <option value="">Memuat kamera...</option>
-      </select>
-      <button id="startBtn" class="px-3 py-2 bg-green-600 text-white rounded">Start</button>
-      <button id="stopBtn" class="px-3 py-2 bg-gray-500 text-white rounded">Stop</button>
+    <div id="reader" class="w-full h-64 bg-gray-100 rounded-lg mb-4 overflow-hidden">
     </div>
 
-    <div id="reader" class="w-full h-64 bg-gray-100 rounded-lg mb-4 overflow-hidden relative">
-      <!-- scanning area -->
-    </div>
-
-    <div class="mb-3 text-center">
-      <input id="fileInput" type="file" accept="image/*" class="mb-2" />
-      <div class="text-sm text-gray-600">Jika kamera bermasalah, unggah gambar QR sebagai cadangan.</div>
-    </div>
-
-    <div id="message" class="text-center text-lg font-medium transition-colors mt-2"></div>
-    <div id="consoleLog" class="mt-3 text-xs text-gray-500 whitespace-pre-wrap"></div>
+    <div id="message" class="text-center text-lg font-medium transition-colors"></div>
   </div>
 </div>
 @endsection
@@ -41,6 +26,7 @@
   const lastScanTimestamps = {};
   let processing = false;
 
+  // AudioContext handling (resume on first user interaction for mobile)
   let audioCtx = null;
   const getAudioCtx = () => {
     if (!audioCtx) {
@@ -74,9 +60,11 @@
   })();
 
   const flash = (color = 'rgba(34,197,94,0.12)') => {
-    readerEl.style.boxShadow = 0 0 0 9999px ${color} inset;
-    setTimeout(() => { readerEl.style.boxShadow = ''; }, 140);
-  };
+  readerEl.style.boxShadow = `0 0 0 9999px ${color} inset`;
+  setTimeout(() => {
+    readerEl.style.boxShadow = '';
+  }, 140);
+};
 
   const showMessage = (text, colorClass = 'text-gray-700') => {
     messageEl.textContent = text;
@@ -91,10 +79,13 @@
       console.log('Cameras found:', cameras);
       if (!cameras || !cameras.length) throw new Error('No camera found');
 
+      // prefer explicit facingMode config on phones; fallback to deviceId
       let chosenConfig = { facingMode: { ideal: "environment" } };
 
+      // Try to guess a back camera by label if available
       const backCamera = cameras.find(cam => /back|rear|environment/i.test(cam.label));
       if (backCamera && backCamera.id) {
+        // On some phones using deviceId works fine; keep it as fallback
         chosenConfig = { deviceId: { exact: backCamera.id } };
         console.log('Using deviceId for camera:', backCamera);
       } else {
@@ -147,9 +138,12 @@
       };
 
       const onScanFailure = (error) => {
+        // show minimal feedback — verbose logs to console for debugging
         console.debug('scan failure:', error);
+        // optional: show message if repeated failures happen (not every frame)
       };
 
+      // Use smaller qrbox on phones (detect mobile)
       const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
       const qrbox = isMobile ? { width: 220, height: 140 } : { width: 300, height: 200 };
 
@@ -162,10 +156,12 @@
         showMessage('Arahkan kamera ke QR code', 'text-gray-700');
       }).catch(err => {
         console.error('QR start error:', err);
+        // Show more helpful error to user
         if (err && err.name === 'NotAllowedError') {
           showMessage('Izin kamera ditolak — izinkan kamera di pengaturan browser.', 'text-red-600');
         } else if (err && err.message && err.message.includes('unsupported constraint')) {
           showMessage('Kamera tidak mendukung konfigurasi yang diminta. Mencoba fallback...', 'text-yellow-600');
+          // if deviceId failed, try facingMode fallback
           if (chosenConfig.deviceId) {
             qrCodeScanner.start({ facingMode: { ideal: "environment" } }, cfg, onScanSuccess, onScanFailure)
               .then(() => showMessage('Arahkan kamera ke QR code', 'text-gray-700'))
@@ -179,6 +175,7 @@
         }
       });
 
+      // stop scanner when leaving
       window.addEventListener('beforeunload', async () => {
         try { await qrCodeScanner.stop(); } catch(e) {}
       });
@@ -186,6 +183,7 @@
     })
     .catch(err => {
       console.error('QR init error:', err);
+      // Be explicit to user
       if (err && err.name === 'NotAllowedError') {
         showMessage('Izin kamera ditolak — izinkan kamera di browser.', 'text-red-600');
       } else {
