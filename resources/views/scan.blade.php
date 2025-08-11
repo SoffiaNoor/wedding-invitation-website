@@ -15,7 +15,8 @@
       <button id="stopBtn" class="px-3 py-2 bg-gray-500 text-white rounded">Stop</button>
     </div>
 
-    <div id="reader" class="w-full h-64 bg-gray-100 rounded-lg mb-4 overflow-hidden relative">
+    <!-- removed fixed height class (h-64) so CSS below controls responsiveness -->
+    <div id="reader" class="w-full bg-gray-100 rounded-lg mb-4 overflow-hidden relative">
       <!-- scanning area -->
     </div>
 
@@ -31,7 +32,50 @@
 @endsection
 
 @push('scripts')
-<script src="https://unpkg.com/html5-qrcode"></script>
+<!-- CSS overrides: hide html5-qrcode visual focus box but keep scanner active. Make reader responsive. -->
+<style>
+  /* Hide decorative qrbox / overlay elements created by html5-qrcode (visual focus box) */
+  .html5-qrcode .qrbox,
+  .html5-qrcode .qrbox:before,
+  .html5-qrcode .qrbox:after,
+  .html5-qrcode .scanner-laser,
+  .html5-qrcode .scan-region,
+  .html5-qrcode .scanning-region,
+  .html5-qrcode .scan-region-frame,
+  .html5-qrcode .html5-qrcode-overlay {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    display: none !important;
+  }
+
+  /* Responsive scanning container */
+  #reader {
+    width: 100%;
+    max-width: 100%;
+    height: min(60vh, 420px);
+    /* responsive height: up to 60% of viewport but not huge */
+    min-height: 200px;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  /* Force video/canvas inserted by html5-qrcode to cover the container */
+  #reader video,
+  #reader canvas {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  /* Slightly different desktop height */
+  @media (min-width: 768px) {
+    #reader {
+      height: 320px;
+    }
+  }
+</style>
+
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -42,7 +86,6 @@
   const lastScanTimestamps = {};
   let processing = false;
 
-  // AudioContext handling (resume on first user interaction for mobile)
   let audioCtx = null;
   const getAudioCtx = () => {
     if (!audioCtx) {
@@ -93,13 +136,10 @@
       console.log('Cameras found:', cameras);
       if (!cameras || !cameras.length) throw new Error('No camera found');
 
-      // prefer explicit facingMode config on phones; fallback to deviceId
       let chosenConfig = { facingMode: { ideal: "environment" } };
 
-      // Try to guess a back camera by label if available
       const backCamera = cameras.find(cam => /back|rear|environment/i.test(cam.label));
       if (backCamera && backCamera.id) {
-        // On some phones using deviceId works fine; keep it as fallback
         chosenConfig = { deviceId: { exact: backCamera.id } };
         console.log('Using deviceId for camera:', backCamera);
       } else {
@@ -152,12 +192,9 @@
       };
 
       const onScanFailure = (error) => {
-        // show minimal feedback — verbose logs to console for debugging
         console.debug('scan failure:', error);
-        // optional: show message if repeated failures happen (not every frame)
       };
 
-      // Use smaller qrbox on phones (detect mobile)
       const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
       const qrbox = isMobile ? { width: 220, height: 140 } : { width: 300, height: 200 };
       const cfg = { fps: 10, qrbox, aspectRatio: isMobile ? 1.6 : 1.78 };
@@ -172,12 +209,10 @@
         showMessage('Arahkan kamera ke QR code', 'text-gray-700');
       }).catch(err => {
         console.error('QR start error:', err);
-        // Show more helpful error to user
         if (err && err.name === 'NotAllowedError') {
           showMessage('Izin kamera ditolak — izinkan kamera di pengaturan browser.', 'text-red-600');
         } else if (err && err.message && err.message.includes('unsupported constraint')) {
           showMessage('Kamera tidak mendukung konfigurasi yang diminta. Mencoba fallback...', 'text-yellow-600');
-          // if deviceId failed, try facingMode fallback
           if (chosenConfig.deviceId) {
             qrCodeScanner.start({ facingMode: { ideal: "environment" } }, cfg, onScanSuccess, onScanFailure)
               .then(() => showMessage('Arahkan kamera ke QR code', 'text-gray-700'))
@@ -191,7 +226,6 @@
         }
       });
 
-      // stop scanner when leaving
       window.addEventListener('beforeunload', async () => {
         try { await qrCodeScanner.stop(); } catch(e) {}
       });
@@ -199,7 +233,6 @@
     })
     .catch(err => {
       console.error('QR init error:', err);
-      // Be explicit to user
       if (err && err.name === 'NotAllowedError') {
         showMessage('Izin kamera ditolak — izinkan kamera di browser.', 'text-red-600');
       } else {
