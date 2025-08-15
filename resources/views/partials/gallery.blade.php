@@ -1,5 +1,5 @@
 <section id="gallery"
-    class="relative min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat overflow-hidden"
+    class="relative min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat overflow-hidden hidden"
     style="background-image: url('{{ asset('assets/images/background-red.png') }}');">
 
     <img class="gallery-leaf-r absolute lg:top-[300px] bottom-[40px] lg:right-[-80px] right-0 lg:w-[25%] w-[30%] h-auto z-10"
