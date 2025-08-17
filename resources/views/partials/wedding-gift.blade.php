@@ -56,5 +56,3 @@
     @include('partials.qris-modal')
 
 </section>
-
-@include('partials.footer')

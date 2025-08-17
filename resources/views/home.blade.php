@@ -134,6 +134,7 @@
       @include('partials.barcode')
       @include('partials.gallery')
       @include('partials.wedding-gift')
+      @include('partials.video')
     </div>
     @include('partials.navbar')
   </section>

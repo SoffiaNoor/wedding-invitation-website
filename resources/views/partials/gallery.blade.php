@@ -2,7 +2,7 @@
     <div
         class="h-screen grid grid-cols-2 grid-rows-3 md:grid-cols-2 md:grid-rows-3 lg:grid-cols-3 lg:grid-rows-2 h-full w-full">
         <div class="relative overflow-hidden h-full lg:col-start-1 lg:row-start-1">
-            <img src="{{ asset('assets/images-edit/1.png') }}" alt="foto 1"
+            <img src="{{ asset('assets/images-edit/2.png') }}" alt="foto 1"
                 class="w-full h-full object-cover transform transition-transform duration-500 hover:scale-110">
         </div>
 
@@ -59,12 +59,12 @@
         </div>
 
         <div class="relative overflow-hidden h-full lg:col-start-3 lg:row-start-1">
-            <img src="{{ asset('assets/images-edit/2.png') }}" alt="foto 2"
+            <img src="{{ asset('assets/images-edit2/wanita.png') }}" alt="foto 2"
                 class="w-full h-full object-cover transform transition-transform duration-500 hover:scale-110">
         </div>
 
         <div class="relative overflow-hidden h-full lg:col-start-2 lg:row-start-2">
-            <img src="{{ asset('assets/images-edit/4.png') }}" alt="foto 3"
+            <img src="{{ asset('assets/images-edit2/laki2.png') }}" alt="foto 3"
                 class="w-full h-full object-cover transform transition-transform duration-500 hover:scale-110">
         </div>
 
