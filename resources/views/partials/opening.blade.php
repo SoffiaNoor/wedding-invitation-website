@@ -19,7 +19,7 @@
     </h2>
 
     <img src="{{ asset('assets/images/nz.png') }}" alt="NZ Logo"
-        class="mb-8 w-[60%] sm:w-[50%] md:w-[35%] lg:w-[20%] h-auto object-contain" />
+        class="nz-logo mb-8 w-[60%] sm:w-[50%] md:w-[35%] lg:w-[20%] h-auto object-contain" />
 
     <div class="text-center">
         <h2 class="font-dmSerif text-[#641b0f] font-light text-2xl sm:text-3xl md:text-4xl">

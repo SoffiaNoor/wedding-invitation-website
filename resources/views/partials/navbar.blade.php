@@ -72,7 +72,7 @@
             </svg>
             <span class="text-[10px] font-medium tracking-wide">Barcode</span>
         </button>
-        {{-- <button onclick="scrollToSection('gallery')"
+        <button onclick="scrollToSection('gallery')"
             class="font-dmSerif text-[#651d0b] flex flex-col items-center text-sm hover:scale-105 hover:text-[#641b0f] transition duration-300">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -81,7 +81,7 @@
                 <path d="M20.4 14.5L16 10 4 20" />
             </svg>
             <span class="text-[10px] font-medium tracking-wide">Gallery</span>
-        </button> --}}
+        </button>
         <button onclick="scrollToSection('wedding-gift')"
             class="font-dmSerif text-[#651d0b] flex flex-col items-center text-sm hover:scale-105 hover:text-[#641b0f] transition duration-300">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"

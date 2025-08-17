@@ -32,7 +32,7 @@
             data-aos="fade-up">
             Terima kasih telah menambah semangat kegembiraan pernikahan kami dengan kehadiran dan hadiah indah Anda.
         </div>
-        <button id="cashless" class="relative overflow-hidden group text-2xl font-brittany rounded-full 
+        <button id="cashless" class="wedding-gift-btn relative overflow-hidden group text-2xl font-brittany rounded-full 
                bg-[#fffded] text-[#641b0f] shadow-lg shadow-[#fffded]/20
                transition-transform duration-300 ease-out
                hover:scale-105 mt-4">

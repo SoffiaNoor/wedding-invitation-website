@@ -18,7 +18,8 @@
         </h2>
 
         <div class="mt-6 sm:mt-8 md:mt-10" data-aos="zoom-in" data-aos-delay="400">
-            {!! Milon\Barcode\Facades\DNS2DFacade::getBarcodeSVG($invitation->code, 'QRCODE', 10, 10) !!}
+            <img src="data:image/png;base64,{!! Milon\Barcode\Facades\DNS2DFacade::getBarcodePNG($invitation->code, 'QRCODE', 10, 10) !!}"
+                alt="QR Code" class="mx-auto" />
         </div>
 
         <p class="mt-6 font-dmSerif text-[#641b0f] text-sm sm:text-base md:text-lg opacity-80" data-aos="fade-up"

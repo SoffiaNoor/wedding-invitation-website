@@ -25,11 +25,16 @@ Route::post('/invitations/{invitation}/check-in', [InvitationController::class, 
 Route::get('scan', fn() => view('scan'))->name('scan.form');
 Route::post('scan', [ScanController::class, 'scan'])->name('scan');
 
+// Route::get('/clear-cache', function () {
+//     Artisan::call('config:clear');
+//     Artisan::call('cache:clear');
+//     Artisan::call('config:cache');
+//     return 'Cache and config cleared!';
+// });
+
 Route::get('/clear-cache', function () {
-    Artisan::call('config:clear');
-    Artisan::call('cache:clear');
-    Artisan::call('config:cache');
-    return 'Cache and config cleared!';
+    Artisan::call('optimize:clear');
+    return 'Cache cleared!';
 });
 
 Route::fallback(function () {

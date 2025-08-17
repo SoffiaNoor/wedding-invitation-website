@@ -118,8 +118,42 @@ openBtn.addEventListener("click", () => {
 });
 
 function scrollToSection(id) {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-    animateSectionContent(id);
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    const startPosition = window.scrollY;
+    const targetPosition = target.getBoundingClientRect().top + window.scrollY;
+    const distance = targetPosition - startPosition;
+
+    const baseDuration = 600;
+    const maxDuration = 1200;
+    const distanceFactor = Math.min(Math.abs(distance) / 1000, 1);
+    const duration = baseDuration + (maxDuration - baseDuration) * distanceFactor;
+
+    let start = null;
+
+    function easeOutBack(t) {
+        const c1 = 1.70158;
+        const c3 = c1 + 1;
+        return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+    }
+
+    function animation(currentTime) {
+        if (!start) start = currentTime;
+        const timeElapsed = currentTime - start;
+        const progress = Math.min(timeElapsed / duration, 1);
+        const easedProgress = easeOutBack(progress);
+
+        window.scrollTo(0, startPosition + distance * easedProgress);
+
+        if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+        } else {
+            animateSectionContent(id);
+        }
+    }
+
+    requestAnimationFrame(animation);
 }
 
 function showSection(sectionId) {
@@ -131,258 +165,361 @@ function showSection(sectionId) {
 function animateSectionContent(sectionId) {
     switch (sectionId) {
         case "couple":
-            gsap.to(`#${sectionId} .couple-flower-r`, {
-                scale: 1.1,
-                rotation: 10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2,
-                ease: 'sine.inOut'
-            });
+            if (!document.querySelector(`#${sectionId} .couple-flower-r`).dataset.animated) {
+                gsap.to(`#${sectionId} .couple-flower-r`, {
+                    scale: 1.1,
+                    rotation: 10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .couple-flower-r`).dataset.animated = true;
+            }
 
-            gsap.to(`#${sectionId} .couple-flower-l`, {
-                scale: 1.1,
-                rotation: -10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2.5,
-                ease: 'sine.inOut'
-            });
+            if (!document.querySelector(`#${sectionId} .couple-flower-l`).dataset.animated) {
+                gsap.to(`#${sectionId} .couple-flower-l`, {
+                    scale: 1.1,
+                    rotation: -10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.5,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .couple-flower-l`).dataset.animated = true;
+            }
 
-            gsap.from(`#${sectionId} .font-rouge, #couple .font-dmSerif`, {
+            gsap.set(`#${sectionId} .font-rouge, #couple .font-dmSerif`, {
                 y: 30,
-                opacity: 0,
-                stagger: 0.2
+                opacity: 0
+            });
+
+            gsap.to(`#${sectionId} .font-rouge, #couple .font-dmSerif`, {
+                y: 0,
+                opacity: 1,
+                stagger: 0.2,
+                duration: 1,
+                ease: "power2.out"
             });
 
             break;
 
         case "opening":
-            gsap.to(`#${sectionId} .opening-flower-1`, {
-                scale: 1.1,
-                rotation: 10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2,
-                ease: 'sine.inOut'
-            });
+            if (!document.querySelector(`#${sectionId} .opening-flower-1`).dataset.animated) {
+                gsap.to(`#${sectionId} .opening-flower-1`, {
+                    scale: 1.1,
+                    rotation: 10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .opening-flower-1`).dataset.animated = true;
+            }
 
-            gsap.to(`#${sectionId} .opening-flower-2`, {
-                scale: 1.1,
-                rotation: -10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2.5,
-                ease: 'sine.inOut'
-            });
+            if (!document.querySelector(`#${sectionId} .opening-flower-2`).dataset.animated) {
+                gsap.to(`#${sectionId} .opening-flower-2`, {
+                    scale: 1.1,
+                    rotation: -10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.5,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .opening-flower-2`).dataset.animated = true;
+            }
 
-            gsap.from(`#${sectionId} .font-brittany, #opening .font-dmSerif`, {
+            gsap.set(`#${sectionId} .font-brittany, #opening .font-dmSerif, .nz-logo`, {
                 y: 30,
-                opacity: 0,
-                stagger: 0.2
+                opacity: 0
+            });
+
+            gsap.to(`#${sectionId} .font-brittany, #opening .font-dmSerif, .nz-logo`, {
+                y: 0,
+                opacity: 1,
+                stagger: 0.2,
+                duration: 1,
+                ease: "power2.out"
             });
 
             break;
 
         case "date":
-            gsap.to(`#${sectionId} .date-flower-1`, {
-                scale: 1.1,
-                rotation: 10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2,
-                ease: 'sine.inOut'
-            });
+            if (!document.querySelector(`#${sectionId} .date-flower-1`).dataset.animated) {
+                gsap.to(`#${sectionId} .date-flower-1`, {
+                    scale: 1.1,
+                    rotation: 10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .date-flower-1`).dataset.animated = true;
+            }
 
-            gsap.to(`#${sectionId} .date-flower-2`, {
-                scale: 1.1,
-                rotation: -10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2.5,
-                ease: 'sine.inOut'
-            });
+            if (!document.querySelector(`#${sectionId} .date-flower-2`).dataset.animated) {
+                gsap.to(`#${sectionId} .date-flower-2`, {
+                    scale: 1.1,
+                    rotation: -10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.5,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .date-flower-2`).dataset.animated = true;
+            }
 
-            gsap.from(`#${sectionId} .date-barcode`, {
+            gsap.set(`#${sectionId} .date-barcode`, {
                 opacity: 0,
                 x: 100,
-                scale: 0.5,
+                scale: 0.5
+            });
+
+            gsap.to(`#${sectionId} .date-barcode`, {
+                opacity: 1,
+                x: 0,
+                scale: 1,
                 duration: 1.2,
                 ease: "back.out(1.7)",
                 delay: 0.5
             });
 
-            gsap.from(`#${sectionId} .font-brittany, .font-rouge , .font-raleway,#date .font-dmSerif, .date-location-barcode, .date-line-decor`, {
+            gsap.set(`#${sectionId} .font-brittany, 
+              #${sectionId} .font-rouge, 
+              #${sectionId} .font-raleway, 
+              #date .font-dmSerif, 
+              #${sectionId} .date-location-barcode, 
+              #${sectionId} .date-line-decor`, {
                 y: 30,
-                opacity: 0,
-                stagger: 0.2
+                opacity: 0
+            });
+
+            gsap.to(`#${sectionId} .font-brittany, 
+             #${sectionId} .font-rouge, 
+             #${sectionId} .font-raleway, 
+             #date .font-dmSerif, 
+             #${sectionId} .date-location-barcode, 
+             #${sectionId} .date-line-decor`, {
+                y: 0,
+                opacity: 1,
+                stagger: 0.2,
+                duration: 1,
+                ease: "power2.out"
             });
 
             break;
 
         case "quotes":
-            gsap.to(`#${sectionId} .quotes-flower-1`, {
-                scale: 1.1,
-                rotation: 10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2,
-                ease: 'sine.inOut'
-            });
+            if (!document.querySelector(`#${sectionId} .quotes-flower-1`).dataset.animated) {
+                gsap.to(`#${sectionId} .quotes-flower-1`, {
+                    scale: 1.1,
+                    rotation: 10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .quotes-flower-1`).dataset.animated = true;
+            }
 
-            gsap.to(`#${sectionId} .quotes-flower-2`, {
-                scale: 1.1,
-                rotation: -10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2.5,
-                ease: 'sine.inOut'
-            });
+            if (!document.querySelector(`#${sectionId} .quotes-flower-2`).dataset.animated) {
+                gsap.to(`#${sectionId} .quotes-flower-2`, {
+                    scale: 1.1,
+                    rotation: -10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.5,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .quotes-flower-2`).dataset.animated = true;
+            }
 
-            gsap.from(`#${sectionId} .font-dmSerif`, {
+            gsap.set(`#${sectionId} .font-dmSerif, 
+              #${sectionId} .quotes-text, 
+              #${sectionId} .quotes-line-decor`, {
                 y: 30,
-                opacity: 0,
-                stagger: 0.2
+                opacity: 0
+            });
+
+            gsap.to(`#${sectionId} .font-dmSerif, 
+             #${sectionId} .quotes-text, 
+             #${sectionId} .quotes-line-decor`, {
+                y: 0,
+                opacity: 1,
+                stagger: 0.2,
+                duration: 1,
+                ease: "power2.out"
             });
 
             break;
 
         case "barcode":
-            gsap.to(`#${sectionId} .barcode-flower-t`, {
-                scale: 1.1,
-                rotation: 10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2,
-                ease: 'sine.inOut'
-            });
+            if (!document.querySelector(`#${sectionId} .barcode-flower-t`).dataset.animated) {
+                gsap.to(`#${sectionId} .barcode-flower-t`, {
+                    scale: 1.1,
+                    rotation: 10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .barcode-flower-t`).dataset.animated = true;
+            }
 
-            gsap.to(`#${sectionId} .barcode-flower-l`, {
-                scale: 1.1,
-                rotation: -10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2.5,
-                ease: 'sine.inOut'
-            });
+            if (!document.querySelector(`#${sectionId} .barcode-flower-l`).dataset.animated) {
+                gsap.to(`#${sectionId} .barcode-flower-l`, {
+                    scale: 1.1,
+                    rotation: -10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.5,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .barcode-flower-l`).dataset.animated = true;
+            }
 
-            gsap.to(`#${sectionId} .barcode-flower-r`, {
-                scale: 1.1,
-                rotation: -10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2.5,
-                ease: 'sine.inOut'
-            });
+            if (!document.querySelector(`#${sectionId} .barcode-flower-r`).dataset.animated) {
+                gsap.to(`#${sectionId} .barcode-flower-r`, {
+                    scale: 1.1,
+                    rotation: -10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.5,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .barcode-flower-r`).dataset.animated = true;
+            }
 
-            gsap.from(`#${sectionId} .font-dmSerif`, {
+            gsap.set(`#${sectionId} .font-dmSerif, 
+              #${sectionId} .barcode-text, 
+              #${sectionId} .barcode-line-decor`, {
                 y: 30,
-                opacity: 0,
-                stagger: 0.2
+                opacity: 0
+            });
+
+            gsap.to(`#${sectionId} .font-dmSerif, 
+             #${sectionId} .barcode-text, 
+             #${sectionId} .barcode-line-decor`, {
+                y: 0,
+                opacity: 1,
+                stagger: 0.2,
+                duration: 1,
+                ease: "power2.out"
             });
 
             break;
 
-        case "gallery":
-            gsap.to(`#${sectionId} .gallery-leaf-r`, {
-                scale: 1.1,
-                rotation: 10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2,
-                ease: 'sine.inOut'
-            });
+        case "gallery": {
+            const gridEl = document.querySelector(`#${sectionId} .grid`);
+            if (!gridEl) break;
 
-            gsap.to(`#${sectionId} .gallery-flower-l`, {
-                scale: 1.1,
-                rotation: -10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2.5,
-                ease: 'sine.inOut'
-            });
+            const items = gsap.utils.toArray(`#${sectionId} .grid > *`);
+            if (!items.length) break;
 
-            gsap.to(`#${sectionId} .gallery-leaf-l`, {
-                scale: 1.1,
-                rotation: -10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2.5,
-                ease: 'sine.inOut'
-            });
+            if (gridEl._galleryTl) {
+                gridEl._galleryTl.kill();
+                gridEl._galleryTl = null;
+            }
 
-            gsap.to(`#${sectionId} .gallery-flower-r`, {
-                scale: 1.1,
-                rotation: 10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2,
-                ease: 'sine.inOut'
-            });
-
-            gsap.to(`#${sectionId} .gallery-images`, {
+            gsap.set(items, {
                 opacity: 0,
-                y: 30,
-                duration: 0.8,
-                stagger: 0.15,
-                ease: "power2.out",
+                y: 20,
+                pointerEvents: 'none'
             });
 
-            gsap.from(`#${sectionId} .font-brittany`, {
-                y: 30,
-                opacity: 0,
-                stagger: 0.2
+            const tl = gsap.timeline();
+
+            const duration = 0.2; 
+            items.forEach(item => {
+                tl.to(item, {
+                    opacity: 1,
+                    y: 0,
+                    pointerEvents: 'auto',
+                    duration: duration,
+                    ease: 'power2.out'
+                });
             });
+
+            gridEl._galleryTl = tl;
 
             break;
+        }
 
         case "wedding-gift":
-            gsap.to(`#${sectionId} .wedding-gift-leaf-r`, {
-                scale: 1.1,
-                rotation: 10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2,
-                ease: 'sine.inOut'
+            if (!document.querySelector(`#${sectionId} .wedding-gift-leaf-r`).dataset.animated) {
+                gsap.to(`#${sectionId} .wedding-gift-leaf-r`, {
+                    scale: 1.1,
+                    rotation: 10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .wedding-gift-leaf-r`).dataset.animated = true;
+            }
+
+            if (!document.querySelector(`#${sectionId} .wedding-gift-flower-3`).dataset.animated) {
+                gsap.to(`#${sectionId} .wedding-gift-flower-3`, {
+                    scale: 1.1,
+                    rotation: -10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.5,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .wedding-gift-flower-3`).dataset.animated = true;
+            }
+
+            if (!document.querySelector(`#${sectionId} .wedding-gift-leaf-l`).dataset.animated) {
+                gsap.to(`#${sectionId} .wedding-gift-leaf-l`, {
+                    scale: 1.1,
+                    rotation: -10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.5,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .wedding-gift-leaf-l`).dataset.animated = true;
+            }
+
+            if (!document.querySelector(`#${sectionId} .wedding-gift-flower-4`).dataset.animated) {
+                gsap.to(`#${sectionId} .wedding-gift-flower-4`, {
+                    scale: 1.1,
+                    rotation: 10,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .wedding-gift-flower-4`).dataset.animated = true;
+            }
+
+            gsap.fromTo(`#${sectionId} .wedding-gift-bride`,
+                { scale: 0.5, opacity: 0 },
+                { scale: 1.3, opacity: 1, duration: 2, ease: "back.out(1.7)" }
+            );
+
+            gsap.fromTo(`#${sectionId} .wedding-gift-groom`,
+                { scale: 0.5, opacity: 0 },
+                { scale: 1.3, opacity: 1, duration: 2, ease: "back.out(1.7)", delay: 0.2 }
+            );
+
+            gsap.set(`#${sectionId} .wedding-gift-text, 
+              #${sectionId} .wedding-gift-title,
+              #${sectionId} .wedding-gift-btn`, {
+                y: 30,
+                opacity: 0
             });
 
-            gsap.to(`#${sectionId} .wedding-gift-bride`, {
-                scale: 1.3,
-                duration: 2,
-                ease: "back.out(1.7)",
-            });
-
-            gsap.to(`#${sectionId} .wedding-gift-groom`, {
-                scale: 1.3,
-                duration: 2,
-                ease: "back.out(1.7)",
-            });
-
-            gsap.to(`#${sectionId} .wedding-gift-flower-3`, {
-                scale: 1.1,
-                rotation: -10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2.5,
-                ease: 'sine.inOut'
-            });
-
-            gsap.to(`#${sectionId} .wedding-gift-leaf-l`, {
-                scale: 1.1,
-                rotation: -10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2.5,
-                ease: 'sine.inOut'
-            });
-
-            gsap.to(`#${sectionId} .wedding-gift-flower-4`, {
-                scale: 1.1,
-                rotation: 10,
-                yoyo: true,
-                repeat: -1,
-                duration: 2,
-                ease: 'sine.inOut'
+            gsap.to(`#${sectionId} .wedding-gift-text, 
+             #${sectionId} .wedding-gift-title,
+             #${sectionId} .wedding-gift-btn`, {
+                y: 0,
+                opacity: 1,
+                stagger: 0.2,
+                duration: 1,
+                ease: "power2.out",
+                delay: 0.5
             });
 
             break;
