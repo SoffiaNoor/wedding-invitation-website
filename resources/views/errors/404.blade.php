@@ -14,8 +14,8 @@
         rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/brittany-signature" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ asset('assets/css/build.css') }}">
-    <script src="{{ asset('assets/js/build.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
+    <script src="{{ asset('assets/js/app.js') }}"></script>
 </head>
 
 <body class="bg-white text-gray-800">
