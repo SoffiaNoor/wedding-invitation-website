@@ -20,8 +20,8 @@
   <link rel="preload" as="image" href="{{ asset('assets/images/nz.png') }}">
   <link rel="preload" as="image" href="{{ asset('assets/images/circle.png') }}">
   
-  <link rel="stylesheet" href="{{ asset('assets/css/build.css') }}">
-  <script src="{{ asset('assets/js/build.js') }}"></script>
+  <link rel="stylesheet" href="{{ asset('assets/css/app-revision.css') }}">
+  <script src="{{ asset('assets/js/app-revision.js') }}"></script>
 
   <style>
     .fade-in {
@@ -139,8 +139,8 @@
     @include('partials.navbar')
   </section>
 
-  <script src="{{asset('assets/js/main.js')}}"></script>
-  <script src="{{asset('assets/js/preLoader.js')}}"></script>
+  <script src="{{asset('assets/js/main-revision.js')}}"></script>
+  <script src="{{asset('assets/js/loader-revision.js')}}"></script>
 </body>
 
 </html>
