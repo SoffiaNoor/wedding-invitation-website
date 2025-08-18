@@ -91,6 +91,15 @@
             </svg>
             <span class="text-[10px] font-medium tracking-wide">Wedding Gift</span>
         </button>
+        <button onclick="scrollToSection('video')"
+            class="font-dmSerif text-[#651d0b] flex flex-col items-center text-sm hover:scale-105 hover:text-[#641b0f] transition duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                    d="M15.6 11.6L22 7v10l-6.4-4.5v-1zM4 5h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7c0-1.1.9-2 2-2z" />
+            </svg>
+            <span class="text-[10px] font-medium tracking-wide">Video</span>
+        </button>
     </div>
 
 </nav>

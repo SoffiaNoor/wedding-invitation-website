@@ -114,6 +114,7 @@ openBtn.addEventListener("click", () => {
             animateSectionContent("barcode");
             animateSectionContent("gallery");
             animateSectionContent("wedding-gift");
+            animateSectionContent("video");
         });
 });
 
@@ -429,7 +430,7 @@ function animateSectionContent(sectionId) {
 
             const tl = gsap.timeline();
 
-            const duration = 0.2; 
+            const duration = 0.2;
             items.forEach(item => {
                 tl.to(item, {
                     opacity: 1,
@@ -521,6 +522,90 @@ function animateSectionContent(sectionId) {
                 ease: "power2.out",
                 delay: 0.5
             });
+
+            break;
+
+        case "video":
+            if (!document.querySelector(`#${sectionId} .video-flower-r`)?.dataset.animated) {
+                gsap.to(`#${sectionId} .video-flower-r`, {
+                    scale: 1.06,
+                    rotation: 6,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.2,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .video-flower-r`).dataset.animated = true;
+            }
+
+            if (!document.querySelector(`#${sectionId} .video-flower-l`)?.dataset.animated) {
+                gsap.to(`#${sectionId} .video-flower-l`, {
+                    scale: 1.06,
+                    rotation: -6,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.6,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .video-flower-l`).dataset.animated = true;
+            }
+
+            if (!document.querySelector(`#${sectionId} .video-leaf-r`)?.dataset.animated) {
+                gsap.to(`#${sectionId} .video-leaf-r`, {
+                    y: -10,
+                    rotation: 8,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.4,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .video-leaf-r`).dataset.animated = true;
+            }
+
+            if (!document.querySelector(`#${sectionId} .video-leaf-l`)?.dataset.animated) {
+                gsap.to(`#${sectionId} .video-leaf-l`, {
+                    y: -12,
+                    rotation: -6,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.8,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .video-leaf-l`).dataset.animated = true;
+            }
+
+            if (!document.querySelector(`#${sectionId} .video-border-tr`)?.dataset.animated) {
+                gsap.to(`#${sectionId} .video-border-tr`, {
+                    scale: 1.02,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 3.2,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .video-border-tr`).dataset.animated = true;
+            }
+            if (!document.querySelector(`#${sectionId} .video-border-tl`)?.dataset.animated) {
+                gsap.to(`#${sectionId} .video-border-tl`, {
+                    scale: 1.02,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 2.9,
+                    ease: 'sine.inOut'
+                });
+                document.querySelector(`#${sectionId} .video-border-tl`).dataset.animated = true;
+            }
+
+            if (!document.querySelector(`#${sectionId} .font-brittany`)?.dataset.animated) {
+                gsap.set(`#${sectionId} .font-brittany, #${sectionId} video`, { y: 30, opacity: 0 });
+                gsap.to(`#${sectionId} .font-brittany, #${sectionId} video`, {
+                    y: 0,
+                    opacity: 1,
+                    stagger: 0.18,
+                    duration: 1,
+                    ease: "power2.out"
+                });
+                document.querySelector(`#${sectionId} .font-brittany`).dataset.animated = true;
+            }
 
             break;
     }

@@ -446,6 +446,10 @@ video {
     bottom: -300px
 }
 
+.bottom-\[-30px\] {
+    bottom: -30px
+}
+
 .bottom-\[-40px\] {
     bottom: -40px
 }
@@ -458,12 +462,20 @@ video {
     bottom: -70px
 }
 
+.bottom-\[10px\] {
+    bottom: 10px
+}
+
 .bottom-\[200px\] {
     bottom: 200px
 }
 
 .bottom-\[20px\] {
     bottom: 20px
+}
+
+.bottom-\[40px\] {
+    bottom: 40px
 }
 
 .left-0 {
@@ -530,6 +542,10 @@ video {
     right: -20px
 }
 
+.right-\[-30px\] {
+    right: -30px
+}
+
 .right-\[-40px\] {
     right: -40px
 }
@@ -580,6 +596,10 @@ video {
 
 .top-\[20px\] {
     top: 20px
+}
+
+.z-0 {
+    z-index: 0
 }
 
 .z-10 {
@@ -826,6 +846,10 @@ video {
 
 .w-\[40\%\] {
     width: 40%
+}
+
+.w-\[45\%\] {
+    width: 45%
 }
 
 .w-\[50\%\] {
@@ -1777,6 +1801,11 @@ video {
     filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
 }
 
+.drop-shadow-lg {
+    --tw-drop-shadow: drop-shadow(0 10px 8px rgb(0 0 0 / .04)) drop-shadow(0 4px 3px rgb(0 0 0 / .1));
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
 .filter {
     filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
 }
@@ -2143,6 +2172,21 @@ video {
 }
 
 @media (min-width: 768px) {
+    .md\:static {
+        position: static
+    }
+
+    .md\:absolute {
+        position: absolute
+    }
+
+    .md\:inset-0 {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0
+    }
+
     .md\:bottom-\[-100px\] {
         bottom: -100px
     }
@@ -2207,6 +2251,10 @@ video {
         height: 7rem
     }
 
+    .md\:h-full {
+        height: 100%
+    }
+
     .md\:w-28 {
         width: 7rem
     }
@@ -2247,8 +2295,16 @@ video {
         width: 70%
     }
 
+    .md\:w-full {
+        width: 100%
+    }
+
     .md\:max-w-lg {
         max-width: 32rem
+    }
+
+    .md\:max-w-none {
+        max-width: none
     }
 
     .md\:grid-cols-2 {
@@ -2265,6 +2321,11 @@ video {
 
     .md\:items-center {
         align-items: center
+    }
+
+    .md\:object-cover {
+        -o-object-fit: cover;
+        object-fit: cover
     }
 
     .md\:text-2xl {
@@ -2314,6 +2375,10 @@ video {
 }
 
 @media (min-width: 1024px) {
+    .lg\:bottom-0 {
+        bottom: 0
+    }
+
     .lg\:bottom-\[-100px\] {
         bottom: -100px
     }
@@ -2330,8 +2395,16 @@ video {
         bottom: -300px
     }
 
+    .lg\:bottom-\[-80px\] {
+        bottom: -80px
+    }
+
     .lg\:left-\[-100px\] {
         left: -100px
+    }
+
+    .lg\:left-\[-150px\] {
+        left: -150px
     }
 
     .lg\:left-\[-180px\] {
@@ -2342,6 +2415,10 @@ video {
         left: -200px
     }
 
+    .lg\:left-\[-80px\] {
+        left: -80px
+    }
+
     .lg\:right-\[-100px\] {
         right: -100px
     }
@@ -2350,8 +2427,16 @@ video {
         right: -200px
     }
 
+    .lg\:right-\[-40px\] {
+        right: -40px
+    }
+
     .lg\:right-\[-60px\] {
         right: -60px
+    }
+
+    .lg\:right-\[-80px\] {
+        right: -80px
     }
 
     .lg\:top-\[-120px\] {
@@ -2360,6 +2445,14 @@ video {
 
     .lg\:top-\[-300px\] {
         top: -300px
+    }
+
+    .lg\:top-\[200px\] {
+        top: 200px
+    }
+
+    .lg\:top-\[300px\] {
+        top: 300px
     }
 
     .lg\:top-\[80px\] {
