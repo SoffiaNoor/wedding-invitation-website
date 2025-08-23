@@ -21,7 +21,7 @@
         </p>
 
         <h3 class="font-rouge text-white text-3xl md:text-4xl lg:text-5xl font-semibold mb-2">
-            Nabiilah Dwi Putri Fatmawati S.Ikom
+            Nabiilah Dwi Putri Fatmawati S.I.Kom
         </h3>
         <p class="font-dmSerif text-white text-sm md:text-base lg:text-lg mb-3">
             Putri <br /> dari H. Fatchur Rochman & Hj. Rachmawati
