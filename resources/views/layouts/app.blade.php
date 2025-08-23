@@ -20,7 +20,7 @@
         rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/brittany-signature" rel="stylesheet">
 
-    
+
     <link rel="stylesheet" href="{{ asset('assets/css/app-revision.css') }}">
     <script src="{{ asset('assets/js/app-revision.js') }}"></script>
 
@@ -70,6 +70,8 @@
                     </a>
                     @php
                     $links = [
+                    ['label' => 'Print Barcode Pria', 'route' => route('invitations.print.pria')],
+                    ['label' => 'Print Barcode Wanita', 'route' => route('invitations.print.wanita')],
                     ['label' => 'Daftar Tamu', 'route' => route('invitations.index')],
                     ['label' => 'Tambah Tamu', 'route' => route('invitations.create')],
                     ['label' => 'Scan Barcode', 'route' => route('scan.form')],
@@ -121,6 +123,8 @@
                 </a>
                 @php
                 $links = [
+                ['label' => 'Print Barcode Pria', 'route' => route('invitations.print.pria')],
+                ['label' => 'Print Barcode Wanita', 'route' => route('invitations.print.wanita')],
                 ['label' => 'Daftar Tamu', 'route' => route('invitations.index')],
                 ['label' => 'Tambah Tamu', 'route' => route('invitations.create')],
                 ['label' => 'Scan Barcode', 'route' => route('scan.form')],

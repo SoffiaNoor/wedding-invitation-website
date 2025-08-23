@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/print-barcode/{slug}', [InvitationController::class, 'printBarcode'])
     ->name('invitations.print');
 
+Route::get('/invitations/print/pria', [InvitationController::class, 'printAllPria'])
+    ->name('invitations.print.pria');
+
+Route::get('/invitations/print/wanita', [InvitationController::class, 'printAllWanita'])
+    ->name('invitations.print.wanita');
+
 Route::get('/invitations/export', [InvitationController::class, 'export'])
     ->name('invitations.export');
 

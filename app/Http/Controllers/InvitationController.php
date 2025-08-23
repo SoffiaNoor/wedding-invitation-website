@@ -78,6 +78,44 @@ class InvitationController extends Controller
         return view('invitations.print', compact('invitation'));
     }
 
+    public function printAllPria(Request $request)
+    {
+        $size = max(1, (int) $request->input('size', 3));
+        $copies = max(1, (int) $request->input('copies', 1));
+        $perPage = max(1, (int) $request->input('per_page', 18));
+
+        $invitations = Invitation::where('side', 'pria')
+            ->orderBy('name')
+            ->get();
+
+        return view('invitations.print-all', [
+            'invitations' => $invitations,
+            'side' => 'pria',
+            'size' => $size,
+            'copies' => $copies,
+            'perPage' => $perPage,
+        ]);
+    }
+
+    public function printAllWanita(Request $request)
+    {
+        $size = max(1, (int) $request->input('size', 3));
+        $copies = max(1, (int) $request->input('copies', 1));
+        $perPage = max(1, (int) $request->input('per_page', 18));
+
+        $invitations = Invitation::where('side', 'wanita')
+            ->orderBy('name')
+            ->get();
+
+        return view('invitations.print-all', [
+            'invitations' => $invitations,
+            'side' => 'wanita',
+            'size' => $size,
+            'copies' => $copies,
+            'perPage' => $perPage,
+        ]);
+    }
+
     public function checkIn(Request $request, Invitation $invitation)
     {
         $request->validate([
