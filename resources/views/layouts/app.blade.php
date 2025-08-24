@@ -32,7 +32,7 @@
 
 </head>
 
-<body x-data="{ showImportModal: false }"
+<body x-data="{ showImportModal: false, editingGuest: false, showDeleteModal:false }"
     class="antialiased bg-cover bg-center text-gray-700 flex flex-col min-h-screen"
     style="background-image: url('{{ asset('assets/images/background-cream.png') }}');">
 

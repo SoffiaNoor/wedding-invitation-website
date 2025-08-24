@@ -16,6 +16,8 @@ Route::get('/invitations/print/pria', [InvitationController::class, 'printAllPri
 Route::get('/invitations/print/wanita', [InvitationController::class, 'printAllWanita'])
     ->name('invitations.print.wanita');
 
+Route::post('/invitations/print-selected', [InvitationController::class, 'printSelected'])->name('invitations.printSelected');
+
 Route::get('/invitations/export', [InvitationController::class, 'export'])
     ->name('invitations.export');
 
@@ -23,7 +25,7 @@ Route::post('/invitations/import', [InvitationController::class, 'import'])
     ->name('invitations.import');
 
 Route::resource('invitations', InvitationController::class)
-    ->except(['edit', 'update', 'destroy', 'show']);
+    ->except(['edit', 'show']);
 
 Route::post('/invitations/{invitation}/check-in', [InvitationController::class, 'checkIn'])
     ->name('invitations.checkin');

@@ -8,6 +8,7 @@ use App\Models\Invitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -71,6 +72,48 @@ class InvitationController extends Controller
         return view('home', compact('invitation'));
     }
 
+    public function update(Request $request, Invitation $invitation)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'side' => ['nullable', 'string', 'max:50'],
+            'code' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('invitations', 'code')->ignore($invitation->id)
+            ],
+        ]);
+
+        try {
+            $invitation->fill($data);
+            $invitation->save();
+
+            return response()->json($invitation, 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to update invitation',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy(Invitation $invitation)
+    {
+        try {
+            $invitation->delete();
+
+            return response()->json([
+                'message' => 'Invitation deleted'
+            ], 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to delete invitation',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function printBarcode($slug)
     {
         $invitation = Invitation::where('slug', $slug)->firstOrFail();
@@ -110,6 +153,41 @@ class InvitationController extends Controller
         return view('invitations.print-all', [
             'invitations' => $invitations,
             'side' => 'wanita',
+            'size' => $size,
+            'copies' => $copies,
+            'perPage' => $perPage,
+        ]);
+    }
+
+    public function printSelected(Request $request)
+    {
+        $data = $request->validate([
+            'slugs' => ['required', 'array', 'min:1'],
+            'slugs.*' => ['required', 'string'],
+            'size' => ['nullable', 'integer', 'min:1'],
+            'copies' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1'],
+        ]);
+
+        $size = max(1, (int) ($data['size'] ?? 3));
+        $copies = max(1, (int) ($data['copies'] ?? 1));
+        $perPage = max(1, (int) ($data['per_page'] ?? 18));
+
+        // preserve ordering by name — filter by provided slugs
+        $invitations = Invitation::whereIn('slug', $data['slugs'])
+            ->orderBy('name')
+            ->get();
+
+        // Optional: reorder in the same order as slugs array
+        // If you want to keep the order as selected by user:
+        $slugOrder = array_flip($data['slugs']);
+        $invitations = $invitations->sortBy(function ($inv) use ($slugOrder) {
+            return $slugOrder[$inv->slug] ?? 999999;
+        });
+
+        return view('invitations.print-all', [
+            'invitations' => $invitations,
+            'side' => 'selected', // or you can pass null or custom label
             'size' => $size,
             'copies' => $copies,
             'perPage' => $perPage,

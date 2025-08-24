@@ -8,9 +8,15 @@
             Daftar Tamu Undangan
         </h1>
 
-        <input type="text" placeholder="Cari nama atau kode..."
-            class="border border-gray-300 rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-pink-400"
-            x-model="search">
+        <div class="flex items-center gap-2">
+            <input type="text" placeholder="Cari nama atau kode..."
+                class="border border-gray-300 rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-pink-400"
+                x-model="search">
+            <button x-show="selected.length > 0" @click="printSelected()"
+                class="font-dmSerif px-3 py-2 rounded-lg bg-blue-600 text-white text-sm shadow-sm hover:bg-blue-700">
+                Print Selected ( <span x-text="selected.length"></span> )
+            </button>
+        </div>
     </div>
     <div class="flex-1 overflow-x-auto">
         <div x-show="alertMessage" x-transition:enter="transform ease-out duration-300"
@@ -45,8 +51,9 @@
         <table class="min-w-full bg-white rounded-2xl shadow-lg overflow-hidden">
             <thead class="bg-[#641b0f]">
                 <tr>
+                    <th class="px-4 py-3 text-left text-sm font-medium font-dmSerif text-white">Select
+                    </th>
                     <th class="px-4 py-3 text-left text-sm font-medium font-dmSerif text-white">No.</th>
-
                     <th class="px-4 py-3 text-left text-sm font-medium font-dmSerif text-white cursor-pointer"
                         @click="sort('name')">
                         <div class="flex items-center justify-between">
@@ -75,9 +82,10 @@
                     </th>
 
                     <th class="px-4 py-3 text-sm font-medium font-dmSerif text-white">Code</th>
-                    <th class="px-4 py-3 text-sm font-medium font-dmSerif text-white">Barcode</th>
+                    {{-- <th class="px-4 py-3 text-sm font-medium font-dmSerif text-white">Barcode</th> --}}
                     <th class="px-4 py-3 text-sm font-medium font-dmSerif text-white">Kedatangan</th>
                     <th class="px-4 py-3 text-sm font-medium font-dmSerif text-white">Invitation URL</th>
+                    <th class="px-4 py-3 text-sm font-medium font-dmSerif text-white">Actions</th>
                     <th class="px-4 py-3 text-sm font-medium font-dmSerif text-white">Manual Check-In</th>
                 </tr>
             </thead>
@@ -90,14 +98,17 @@
                 </tr>
                 <template x-for="(inv, index) in paginatedInvitations" :key="inv.id">
                     <tr class="font-dmSerif text-sm">
+                        <td class="text-center">
+                            <input type="checkbox" :value="inv.slug" x-model="selected" />
+                        </td>
                         <td class="text-center" x-text="(currentPage - 1) * perPage + index + 1"></td>
                         <td x-text="inv.name"></td>
                         <td x-text="inv.side"></td>
                         <td x-text="inv.code"></td>
-                        <td class="text-center py-2">
+                        {{-- <td class="text-center py-2">
                             <div class="justify-items-center" x-html="inv.barcode_svg"></div>
                             <div x-text="inv.code"></div>
-                        </td>
+                        </td> --}}
                         <td class="text-center">
                             <span x-text="inv.arrived_at ?? '—'"></span>
                         </td>
@@ -134,6 +145,32 @@
                                     </svg>
                                     Print
                                 </a>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button @click="editGuest(inv)" class="p-2 rounded-lg border hover:bg-gray-50"
+                                    title="Edit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <polygon points="16 3 21 8 8 21 3 21 3 16 16 3"></polygon>
+                                    </svg>
+                                </button>
+
+                                <button @click="deleteSlug = inv.slug; showDeleteModal = true"
+                                    class="p-2 rounded-lg border hover:bg-red-50" title="Delete">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path
+                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                        </path>
+                                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                                    </svg>
+                                </button>
                             </div>
                         </td>
                         <td class="px-4 py-3 justify-items-center">
@@ -196,6 +233,58 @@
             </div>
         </div>
     </div>
+
+    <!-- Edit Modal -->
+    <div x-show="editingGuest" x-cloak x-transition
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div @click.away="editingGuest = null" class="bg-white p-6 m-6 rounded-xl shadow-xl w-full max-w-md">
+
+            <h2 class="text-lg font-bold mb-4 font-dmSerif text-[#641b0f]">Edit Guest</h2>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium font-dmSerif text-[#641b0f]">Name</label>
+                    <input type="text" x-model="editingGuest.name" class="w-full border rounded p-2 mt-1" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium font-dmSerif text-[#641b0f]">Side</label>
+                    <input type="text" x-model="editingGuest.side" class="w-full border rounded p-2 mt-1" />
+                </div>
+
+                <div class="hidden">
+                    <label class="block text-sm font-medium font-dmSerif text-[#641b0f]">Code</label>
+                    <input type="text" x-model="editingGuest.code" class="w-full border rounded p-2 mt-1" />
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end space-x-2">
+                <button type="button" @click="editingGuest = null"
+                    class="px-4 py-2 bg-gray-200 rounded font-dmSerif">Batal</button>
+                <button type="button" @click="saveGuest()"
+                    class="px-4 py-2 bg-[#641b0f] text-white rounded font-dmSerif">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div x-show="showDeleteModal" x-cloak x-transition
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div @click.away="showDeleteModal = false" class="bg-white p-6 m-6 rounded-xl shadow-xl w-full max-w-md">
+
+            <h2 class="text-lg font-bold mb-4 font-dmSerif text-[#641b0f]">Hapus Tamu</h2>
+            <p class="mb-6 text-gray-700">Apakah Anda yakin ingin menghapus tamu ini?
+                <br><span class="font-semibold text-red-600">Tindakan ini tidak bisa dibatalkan.</span>
+            </p>
+
+            <div class="flex justify-end space-x-2">
+                <button @click="showDeleteModal = false"
+                    class="px-4 py-2 bg-gray-200 rounded font-dmSerif">Batal</button>
+                <button @click="confirmDelete()"
+                    class="px-4 py-2 bg-red-600 text-white rounded font-dmSerif">Hapus</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -211,10 +300,65 @@
         currentPage: 1,
         perPage: 10,
 
+        selected: [], 
+        selectModeVisible: false,
+
         showAlert(message, type = 'success') {
             this.alertMessage = message;
             this.alertType = type;
             setTimeout(() => this.alertMessage = '', 2000);
+        },
+
+        printSelected() {
+        if (!this.selected || this.selected.length === 0) {
+            this.showAlert('Pilih minimal 1 tamu untuk dicetak.', 'error');
+            return;
+        }
+
+        const size = 3;
+        const copies = 1;
+        const perPage = 18;
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/invitations/print-selected';
+        form.target = '_blank';
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = '{{ csrf_token() }}';
+        form.appendChild(csrfInput);
+
+        this.selected.forEach(slug => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'slugs[]';
+            input.value = slug;
+            form.appendChild(input);
+        });
+
+        const sizeInput = document.createElement('input');
+        sizeInput.type = 'hidden';
+        sizeInput.name = 'size';
+        sizeInput.value = size;
+        form.appendChild(sizeInput);
+
+        const copiesInput = document.createElement('input');
+        copiesInput.type = 'hidden';
+        copiesInput.name = 'copies';
+        copiesInput.value = copies;
+        form.appendChild(copiesInput);
+
+        const perPageInput = document.createElement('input');
+        perPageInput.type = 'hidden';
+        perPageInput.name = 'per_page';
+        perPageInput.value = perPage;
+        form.appendChild(perPageInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        form.remove();
         },
 
         toggleCheckIn(slug) {
@@ -251,6 +395,90 @@
             });
         },
 
+        editGuest(inv) {
+            this.editingGuest = {...inv};
+            this.editIndex = this.invitations.findIndex(g => g.slug === inv.slug);
+        },
+
+        saveGuest() {
+            if (!this.editingGuest) return;
+            const payload = {
+                name: this.editingGuest.name,
+                side: this.editingGuest.side,
+                code: this.editingGuest.code
+            };
+
+            fetch(`/invitations/${this.editingGuest.slug}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => {
+                if (!res.ok) return res.json().then(err => Promise.reject(err));
+                return res.json();
+            })
+            .then(data => {
+                if (this.editIndex !== null && this.editIndex >= 0) {
+                    this.invitations.splice(this.editIndex, 1, data);
+                } else {
+                    const idx = this.invitations.findIndex(g => g.slug === data.slug);
+                    if (idx !== -1) this.invitations.splice(idx, 1, data);
+                }
+
+                this.showAlert('Guest updated successfully', 'success');
+                this.editingGuest = null;
+                this.editIndex = null;
+            })
+            .catch(err => {
+                console.error(err);
+                const message = (err && err.message) ? err.message : 'Failed to update guest';
+                this.showAlert(message, 'error');
+            });
+        },
+
+        // ---------- DELETE ----------
+        deleteSlug: null,
+        showDeleteModal: false,
+
+        deleteGuest(slug) {
+            this.deleteSlug = slug; 
+            this.showDeleteModal = true; 
+        },
+
+        confirmDelete() {
+            if (!this.deleteSlug) return;
+
+            fetch(`/invitations/${this.deleteSlug}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to delete');
+                return res.json();
+            })
+            .then(data => {
+                this.invitations = this.invitations.filter(g => g.slug !== this.deleteSlug);
+                this.showAlert('Guest deleted', 'success');
+
+                this.showDeleteModal = false;
+                this.deleteSlug = null;
+
+                if (this.paginatedInvitations.length === 0 && this.currentPage > 1) {
+                    this.currentPage--;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                this.showAlert('Error deleting guest', 'error');
+            });
+        },
+        
         get filteredInvitations() {
             let data = this.invitations;
 
