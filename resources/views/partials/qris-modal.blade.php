@@ -18,10 +18,10 @@
             </div>
 
             <div class="max-w-[92vw] text-center lg:block md:block hidden">
-              <div id="qris-title"
+              <!-- <div id="qris-title"
                 class="font-brittany text-base sm:text-lg md:text-2xl lg:text-3xl text-white leading-tight tracking-tight">
                 Scan untuk Bayar
-              </div>
+              </div> -->
               <div class="text-[11px] sm:text-xs md:text-sm text-white/75 -mt-0.5">
                 QRIS — Nabiilah &amp; Zulfi
               </div>
