@@ -1,48 +1,46 @@
 @extends('layouts.app')
 
-
 @section('content')
-<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-  <div class="w-full max-w-md sm:max-w-lg md:max-w-2xl bg-white shadow-lg rounded-2xl overflow-hidden">
-    <div class="p-4 sm:p-6 md:p-8">
-      <h2 class="text-xl sm:text-2xl md:text-3xl font-dmSerif font-semibold text-[#641b0f] mb-4 text-center">
+<div class="min-h-screen flex items-center justify-center bg-gray-50 px-2 sm:px-4">
+  <div class="w-full max-w-md sm:max-w-lg md:max-w-xl bg-white shadow-lg rounded-2xl overflow-hidden">
+    <div class="p-3 sm:p-4 md:p-6">
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-dmSerif font-semibold text-[#641b0f] mb-3 text-center">
         Scan Barcode Undangan
       </h2>
 
-
       <!-- Controls: camera label + select + switch button -->
-      <div class="flex flex-col sm:flex-row items-center sm:justify-between gap-3 mb-3">
-        <div id="cameraLabel" class="text-sm text-gray-600 text-center sm:text-left">Mencari kamera…</div>
-
+      <div class="flex flex-col sm:flex-row items-center sm:justify-between gap-2 mb-2">
+        <div id="cameraLabel" class="text-xs sm:text-sm text-gray-600 text-center sm:text-left">Mencari kamera…</div>
 
         <div class="flex items-center gap-2 w-full sm:w-auto">
           <select id="cameraSelect" class="hidden sm:inline-block p-2 border rounded-md text-sm bg-white">
             <!-- populated by JS -->
           </select>
 
-
           <button id="switchCameraBtn"
-            class="w-full sm:w-auto px-4 py-2 rounded-md text-sm font-medium bg-[#641b0f] text-white shadow-sm hover:opacity-95 focus:outline-none"
+            class="w-full sm:w-auto px-3 py-2 rounded-md text-sm font-medium bg-[#641b0f] text-white shadow-sm hover:opacity-95 focus:outline-none"
             aria-label="Switch Camera">
             Switch Camera
           </button>
         </div>
       </div>
 
-
-      <!-- Reader area: responsive height, keeps aspect on larger screens -->
-      <div id="reader" class="w-full bg-black rounded-lg overflow-hidden flex items-center justify-center mb-3"
-        style="height: 36vw; max-height: 480px; min-height: 220px;">
+      <!-- Reader area: responsive height, bigger focus box and reduced lateral padding -->
+      <div id="reader" class="w-full bg-black rounded-lg overflow-hidden flex items-center justify-center mb-3 relative"
+        style="height: min(72vw, 600px); max-height: 600px; min-height: 320px;">
         <!-- html5-qrcode will inject the video/canvas here -->
         <div class="text-gray-300 text-sm">Memuat kamera…</div>
-      </div>
 
+        <!-- Visual focus box overlay (larger) -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div class="w-11/12 sm:w-9/12 md:w-7/12 aspect-square border-4 border-white/75 rounded-lg shadow-inner"></div>
+        </div>
+      </div>
 
       <div id="message" class="text-center text-base sm:text-lg font-medium transition-colors h-8"></div>
 
-
       <!-- Optional hint / instructions -->
-      <div class="mt-4 text-xs text-gray-500 text-center">
+      <div class="mt-3 text-xs text-gray-500 text-center">
         Pastikan halaman dijalankan melalui HTTPS (atau localhost) dan berikan izin kamera jika diminta.
       </div>
     </div>
