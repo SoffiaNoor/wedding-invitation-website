@@ -36,12 +36,22 @@
       </button>
     </div>
 
-    <div class="flex items-center justify-between mb-2">
-      <div id="cameraLabel" class="text-sm text-gray-600">Mencari kamera…</div>
-      <div class="flex items-center gap-2">
-        <select id="cameraSelect" class="hidden md:inline-block p-1 border rounded text-sm"></select>
-        <button id="switchCameraBtn" class="px-3 py-1 bg-[#641b0f] text-white rounded text-sm">Switch Camera</button>
+    <div class="flex flex-col gap-2 mb-3">
+      <!-- Label -->
+      <div id="cameraLabel" class="text-sm text-gray-600">
+        Mencari kamera…
       </div>
+
+      <!-- Select -->
+      <select id="cameraSelect"
+        class="hidden md:block w-full px-2 py-1 border rounded-md text-sm focus:ring-1 focus:ring-[#641b0f] focus:border-[#641b0f]">
+      </select>
+
+      <!-- Button -->
+      <button id="switchCameraBtn"
+        class="w-full sm:w-auto px-3 py-1.5 bg-[#641b0f] text-white rounded-md text-sm hover:bg-[#4e150c] transition">
+        Switch Camera
+      </button>
     </div>
 
     <div id="reader"
