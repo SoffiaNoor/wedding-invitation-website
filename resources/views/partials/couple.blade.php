@@ -24,7 +24,7 @@
             Nabiilah Dwi Putri Fatmawati S.I.Kom
         </h3>
         <p class="font-dmSerif text-white text-sm md:text-base lg:text-lg mb-3">
-            Putri <br /> dari H. Fatchur Rochman & Hj. Rachmawati
+            Putri <br /> dari Bapak H. Fatchur Rochman & Ibu Hj. Rachmawati
         </p>
 
         <div class="font-rouge text-white text-3xl md:text-4xl lg:text-5xl font-semibold mb-3">
@@ -35,7 +35,7 @@
             Mochammad Zulfi S. Kom
         </h3>
         <p class="font-dmSerif text-white text-sm md:text-base lg:text-lg">
-            Putra <br /> dari Anis (alm) & Yayuk Siti Rahayu
+            Putra <br /> dari Bapak Anis (alm) & Ibu Yayuk Siti Rahayu
         </p>
     </div>
 </section>

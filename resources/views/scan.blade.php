@@ -23,9 +23,9 @@
     const readerEl = document.getElementById('reader');
 
     let qrCodeScanner;
-    let isProcessing = false;       // prevents concurrent fetches
-    let lastDecoded = null;         // simple duplicate filter
-    const DUPLICATE_COOLDOWN = 2000; // ms - ignore same code within this time
+    let isProcessing = false;
+    let lastDecoded = null;
+    const DUPLICATE_COOLDOWN = 2000; // ms
     let lastTime = 0;
 
     const showMessage = (text, ok = true) => {
@@ -34,26 +34,60 @@
       messageEl.classList.toggle('text-red-600', !ok);
     };
 
+    const detectIsMobileLike = () => {
+      // heuristik: userAgent mobile OR touch device with small screen
+      const uaMobile = /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+      const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+      const smallScreen = Math.min(screen.width, screen.height) < 768;
+      return uaMobile || (hasTouch && smallScreen);
+    };
+
     try {
-      const cameras = await Html5Qrcode.getCameras();
+      let cameras = await Html5Qrcode.getCameras();
       if (!cameras || cameras.length === 0) throw new Error('No camera found');
 
-      // Prefer back/rear/environment camera if available (works better on phones)
-      const backCamera = cameras.find(c => /back|rear|environment/i.test(c.label)) || cameras[0];
+      // jika labels kosong (umumnya karena belum ada izin), minta izin dan refresh daftar kamera
+      const labelsEmpty = cameras.every(c => !c.label || c.label.trim() === '');
+      if (labelsEmpty && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          // minta permission (langsung dilepas)
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          // hentikan track agar tidak terus on
+          stream.getTracks().forEach(t => t.stop());
+          cameras = await Html5Qrcode.getCameras();
+        } catch (permErr) {
+          // kalau user menolak, lanjut dengan apa yang ada
+          console.warn('Camera permission denied or unavailable', permErr);
+        }
+      }
+
+      const isMobileLike = detectIsMobileLike();
+
+      // helper: cari kamera berdasar kata pada label
+      const findByLabel = (regex) => cameras.find(c => c.label && regex.test(c.label));
+
+      // pilih kamera: mobile -> prefer back/rear/environment, fallback ke first;
+      // desktop/laptop -> prefer front/user if ada, else first
+      let chosenCameraId = null;
+      if (isMobileLike) {
+        const backCam = findByLabel(/back|rear|environment|wide angle|outdoor|kamerabelakang/i);
+        chosenCameraId = backCam ? backCam.id : (cameras[0] ? cameras[0].id : null);
+      } else {
+        const frontCam = findByLabel(/front|user|integrated|face/i);
+        chosenCameraId = frontCam ? frontCam.id : (cameras[0] ? cameras[0].id : null);
+      }
 
       qrCodeScanner = new Html5Qrcode(readerEl.id);
 
       const qrSuccess = async (decodedText /*, decodedResult */) => {
         const now = Date.now();
 
-        // Ignore duplicate results very quickly in a row
         if (decodedText === lastDecoded && (now - lastTime) < DUPLICATE_COOLDOWN) {
           return;
         }
         lastDecoded = decodedText;
         lastTime = now;
 
-        // Prevent overlapping requests
         if (isProcessing) return;
         isProcessing = true;
 
@@ -74,33 +108,52 @@
           console.error('Fetch error:', err);
           showMessage('Terjadi kesalahan. Coba lagi.', false);
         } finally {
-          // DO NOT stop the scanner here — we want unlimited scanning.
+          // jangan stop scanner -> unlimited scanning
           isProcessing = false;
         }
       };
 
-      // Start the camera using the camera id (more reliable on mobile)
-      await qrCodeScanner.start(
-        backCamera.id, // pass device id to ensure back camera on mobiles
-        {
-          fps: 10,
-          // qrbox helps with performance and UI; it's responsive to the reader size
-          qrbox: {
-            width: Math.min(320, readerEl.clientWidth - 20),
-            height: Math.min(320, readerEl.clientHeight - 20)
-          },
-          // support only QR codes
-          formatsToSupport: [ Html5QrcodeSupportedFormats.QRCODE ]
+      // Options
+      const config = {
+        fps: 10,
+        qrbox: {
+          width: Math.min(320, readerEl.clientWidth - 20),
+          height: Math.min(320, readerEl.clientHeight - 20)
         },
-        qrSuccess,
-        (errorMessage) => {
-          // Optional per-frame error callback (useful for debugging)
-          // console.debug('QR frame error:', errorMessage);
-        }
-      );
+        formatsToSupport: [ Html5QrcodeSupportedFormats.QRCODE ]
+      };
 
-      // Optional: expose stop/start controls if you want to manually stop/resume
-      window._qrCodeScanner = qrCodeScanner;
+      // Jika kita punya deviceId, pakai itu. Kalau tidak (atau tidak berhasil), coba pakai facingMode fallback.
+      try {
+        if (chosenCameraId) {
+          await qrCodeScanner.start(chosenCameraId, config, qrSuccess, (err) => {
+            // per-frame error opsional
+          });
+        } else {
+          // fallback ke facingMode (library mendukung object config untuk facingMode)
+          const facing = isMobileLike ? { facingMode: { exact: "environment" } } : { facingMode: "user" };
+          await qrCodeScanner.start(facing, config, qrSuccess, (err) => {
+            // ignore per-frame errors
+          });
+        }
+
+        window._qrCodeScanner = qrCodeScanner; // expose for debugging/controls
+        showMessage('Siap melakukan scan', true);
+
+      } catch (startErr) {
+        console.warn('Start camera with chosen id failed, trying opposite/fallback...', startErr);
+
+        // coba kebalikan pilihan (jika mobile pakai user, jika desktop pakai environment), lalu fallback final ke default start()
+        try {
+          const oppositeFacing = isMobileLike ? { facingMode: "user" } : { facingMode: { exact: "environment" } };
+          await qrCodeScanner.start(oppositeFacing, config, qrSuccess, (err) => {});
+          window._qrCodeScanner = qrCodeScanner;
+          showMessage('Siap melakukan scan (fallback)', true);
+        } catch (finalErr) {
+          console.error('Final start failed', finalErr);
+          showMessage('Tidak dapat mengakses kamera.', false);
+        }
+      }
 
     } catch (err) {
       console.error('QR init error:', err);
