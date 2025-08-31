@@ -7,8 +7,15 @@
       Scan Barcode Undangan
     </h2>
 
-    <div id="reader" class="w-full h-64 bg-gray-100 rounded-lg mb-4 overflow-hidden">
+    <div class="flex items-center justify-between mb-3">
+      <div id="cameraLabel" class="text-sm text-gray-600">Mencari kamera…</div>
+      <div class="flex items-center gap-2">
+        <select id="cameraSelect" class="hidden p-2 border rounded"></select>
+        <button id="switchCameraBtn" class="px-3 py-2 bg-[#641b0f] text-white rounded text-sm">Switch Camera</button>
+      </div>
     </div>
+
+    <div id="reader" class="w-full h-64 bg-gray-100 rounded-lg mb-4 overflow-hidden"></div>
 
     <div id="message" class="text-center text-lg font-medium transition-colors"></div>
   </div>
@@ -21,6 +28,9 @@
   document.addEventListener('DOMContentLoaded', async () => {
     const messageEl = document.getElementById('message');
     const readerEl = document.getElementById('reader');
+    const switchBtn = document.getElementById('switchCameraBtn');
+    const cameraLabelEl = document.getElementById('cameraLabel');
+    const cameraSelect = document.getElementById('cameraSelect');
 
     let qrCodeScanner;
     let isProcessing = false;
@@ -28,137 +38,169 @@
     const DUPLICATE_COOLDOWN = 2000; // ms
     let lastTime = 0;
 
+    let cameras = []; // array of {id, label}
+    let currentIndex = 0; // index into cameras array or into fallbackConfigs
+    let fallbackConfigs = [
+      { config: { facingMode: "environment" }, label: "Rear (environment)" },
+      { config: { facingMode: "user" }, label: "Front (user)" }
+    ];
+    let usingFallback = false;
+
     const showMessage = (text, ok = true) => {
       messageEl.textContent = text;
       messageEl.classList.toggle('text-green-600', ok);
       messageEl.classList.toggle('text-red-600', !ok);
     };
 
-    const detectIsMobileLike = () => {
-      // heuristik: userAgent mobile OR touch device with small screen
-      const uaMobile = /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
-      const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
-      const smallScreen = Math.min(screen.width, screen.height) < 768;
-      return uaMobile || (hasTouch && smallScreen);
+    const qrSuccess = async (decodedText /*, decodedResult */) => {
+      const now = Date.now();
+
+      if (decodedText === lastDecoded && (now - lastTime) < DUPLICATE_COOLDOWN) {
+        return;
+      }
+      lastDecoded = decodedText;
+      lastTime = now;
+
+      if (isProcessing) return;
+      isProcessing = true;
+
+      try {
+        const response = await fetch("{{ route('scan') }}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          },
+          body: JSON.stringify({ code: decodedText })
+        });
+
+        const data = await response.json();
+        showMessage(data.message || 'Scanned', data.status === 'ok');
+
+      } catch (err) {
+        console.error('Fetch error:', err);
+        showMessage('Terjadi kesalahan. Coba lagi.', false);
+      } finally {
+        isProcessing = false;
+      }
     };
 
-    try {
-      let cameras = await Html5Qrcode.getCameras();
-      if (!cameras || cameras.length === 0) throw new Error('No camera found');
+    const qrError = (err) => {
+      // optional per-frame error
+      // console.debug('QR frame error:', err);
+    };
 
-      // jika labels kosong (umumnya karena belum ada izin), minta izin dan refresh daftar kamera
-      const labelsEmpty = cameras.every(c => !c.label || c.label.trim() === '');
-      if (labelsEmpty && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        try {
-          // minta permission (langsung dilepas)
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          // hentikan track agar tidak terus on
-          stream.getTracks().forEach(t => t.stop());
-          cameras = await Html5Qrcode.getCameras();
-        } catch (permErr) {
-          // kalau user menolak, lanjut dengan apa yang ada
-          console.warn('Camera permission denied or unavailable', permErr);
-        }
-      }
+    const updateCameraLabel = (text) => {
+      cameraLabelEl.textContent = text || '';
+    };
 
-      const isMobileLike = detectIsMobileLike();
+    const startScanner = async (cameraOrConfig) => {
+      try {
+        if (!qrCodeScanner) qrCodeScanner = new Html5Qrcode(readerEl.id);
 
-      // helper: cari kamera berdasar kata pada label
-      const findByLabel = (regex) => cameras.find(c => c.label && regex.test(c.label));
+        // make sure to stop previous stream before starting new one
+        try { await qrCodeScanner.stop(); } catch (e) { /* ignore if not started */ }
 
-      // pilih kamera: mobile -> prefer back/rear/environment, fallback ke first;
-      // desktop/laptop -> prefer front/user if ada, else first
-      let chosenCameraId = null;
-      if (isMobileLike) {
-        const backCam = findByLabel(/back|rear|environment|wide angle|outdoor|kamerabelakang/i);
-        chosenCameraId = backCam ? backCam.id : (cameras[0] ? cameras[0].id : null);
-      } else {
-        const frontCam = findByLabel(/front|user|integrated|face/i);
-        chosenCameraId = frontCam ? frontCam.id : (cameras[0] ? cameras[0].id : null);
-      }
-
-      qrCodeScanner = new Html5Qrcode(readerEl.id);
-
-      const qrSuccess = async (decodedText /*, decodedResult */) => {
-        const now = Date.now();
-
-        if (decodedText === lastDecoded && (now - lastTime) < DUPLICATE_COOLDOWN) {
-          return;
-        }
-        lastDecoded = decodedText;
-        lastTime = now;
-
-        if (isProcessing) return;
-        isProcessing = true;
-
-        try {
-          const response = await fetch("{{ route('scan') }}", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ code: decodedText })
-          });
-
-          const data = await response.json();
-          showMessage(data.message || 'Scanned', data.status === 'ok');
-
-        } catch (err) {
-          console.error('Fetch error:', err);
-          showMessage('Terjadi kesalahan. Coba lagi.', false);
-        } finally {
-          // jangan stop scanner -> unlimited scanning
-          isProcessing = false;
-        }
-      };
-
-      // Options
-      const config = {
-        fps: 10,
-        qrbox: {
+        const qrbox = {
           width: Math.min(320, readerEl.clientWidth - 20),
           height: Math.min(320, readerEl.clientHeight - 20)
-        },
-        formatsToSupport: [ Html5QrcodeSupportedFormats.QRCODE ]
-      };
+        };
 
-      // Jika kita punya deviceId, pakai itu. Kalau tidak (atau tidak berhasil), coba pakai facingMode fallback.
-      try {
-        if (chosenCameraId) {
-          await qrCodeScanner.start(chosenCameraId, config, qrSuccess, (err) => {
-            // per-frame error opsional
-          });
-        } else {
-          // fallback ke facingMode (library mendukung object config untuk facingMode)
-          const facing = isMobileLike ? { facingMode: { exact: "environment" } } : { facingMode: "user" };
-          await qrCodeScanner.start(facing, config, qrSuccess, (err) => {
-            // ignore per-frame errors
-          });
-        }
+        await qrCodeScanner.start(
+          cameraOrConfig,
+          {
+            fps: 10,
+            qrbox,
+            formatsToSupport: [ Html5QrcodeSupportedFormats.QRCODE ]
+          },
+          qrSuccess,
+          qrError
+        );
 
-        window._qrCodeScanner = qrCodeScanner; // expose for debugging/controls
-        showMessage('Siap melakukan scan', true);
+        // expose to console for debugging
+        window._qrCodeScanner = qrCodeScanner;
 
-      } catch (startErr) {
-        console.warn('Start camera with chosen id failed, trying opposite/fallback...', startErr);
-
-        // coba kebalikan pilihan (jika mobile pakai user, jika desktop pakai environment), lalu fallback final ke default start()
-        try {
-          const oppositeFacing = isMobileLike ? { facingMode: "user" } : { facingMode: { exact: "environment" } };
-          await qrCodeScanner.start(oppositeFacing, config, qrSuccess, (err) => {});
-          window._qrCodeScanner = qrCodeScanner;
-          showMessage('Siap melakukan scan (fallback)', true);
-        } catch (finalErr) {
-          console.error('Final start failed', finalErr);
-          showMessage('Tidak dapat mengakses kamera.', false);
-        }
+      } catch (err) {
+        console.error('Start scanner error:', err);
+        showMessage('Gagal mengakses kamera. Coba refresh & beri izin.', false);
       }
+    };
 
+    const restartWithIndex = async (index) => {
+      if (cameras.length > 0) {
+        usingFallback = false;
+        currentIndex = index % cameras.length;
+        const cam = cameras[currentIndex];
+        updateCameraLabel(cam.label || ('Camera ' + (currentIndex + 1)));
+        await startScanner(cam.id || cam.deviceId || cam); // device id string
+      } else {
+        // fallback to facingMode configs
+        usingFallback = true;
+        currentIndex = index % fallbackConfigs.length;
+        const conf = fallbackConfigs[currentIndex];
+        updateCameraLabel(conf.label);
+        await startScanner({ facingMode: conf.config.facingMode });
+      }
+    };
+
+    // switch button handler: cycle to next camera
+    switchBtn.addEventListener('click', async () => {
+      if (cameras.length > 1) {
+        await restartWithIndex((currentIndex + 1) % Math.max(1, cameras.length));
+      } else {
+        // toggle fallback (rear <-> front)
+        await restartWithIndex((currentIndex + 1) % fallbackConfigs.length);
+      }
+    });
+
+    // camera select handler (if many devices)
+    cameraSelect.addEventListener('change', async (e) => {
+      const idx = parseInt(e.target.value, 10);
+      if (!isNaN(idx)) await restartWithIndex(idx);
+    });
+
+    try {
+      const rawCams = await Html5Qrcode.getCameras();
+      // rawCams: array of {id, label} or empty if not available
+      if (rawCams && rawCams.length > 0) {
+        // Normalize
+        cameras = rawCams.map(c => ({ id: c.id, label: c.label || '' }));
+
+        // Try to prefer a back/rear/environment camera
+        let preferredIndex = cameras.findIndex(c => /back|rear|environment|wide/i.test(c.label));
+        if (preferredIndex === -1) preferredIndex = 0;
+
+        // If more than one camera, populate select and show
+        if (cameras.length > 1) {
+          cameraSelect.innerHTML = '';
+          cameras.forEach((c, i) => {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = c.label || `Camera ${i + 1}`;
+            cameraSelect.appendChild(opt);
+          });
+          cameraSelect.classList.remove('hidden');
+        } else {
+          cameraSelect.classList.add('hidden');
+        }
+
+        await restartWithIndex(preferredIndex);
+      } else {
+        // No device ids returned — fallback to facingMode toggle (useful on iOS)
+        cameras = [];
+        cameraSelect.classList.add('hidden');
+        // start with rear first
+        await restartWithIndex(0);
+      }
     } catch (err) {
       console.error('QR init error:', err);
-      showMessage('Tidak dapat mengakses kamera.', false);
+      showMessage('Tidak dapat mengakses kamera. Pastikan halaman dijalankan di HTTPS & beri izin kamera.', false);
     }
+
+    // Cleanup when page unloads (stop camera)
+    window.addEventListener('beforeunload', async () => {
+      try { if (qrCodeScanner) await qrCodeScanner.stop(); } catch(e) {}
+    });
   });
 </script>
 @endpush
