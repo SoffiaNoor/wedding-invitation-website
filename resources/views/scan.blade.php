@@ -1,49 +1,54 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center bg-gray-50 px-2 sm:px-4">
-  <div class="w-full max-w-md sm:max-w-lg md:max-w-xl bg-white shadow-lg rounded-2xl overflow-hidden">
-    <div class="p-3 sm:p-4 md:p-6">
-      <h2 class="text-xl sm:text-2xl md:text-3xl font-dmSerif font-semibold text-[#641b0f] mb-3 text-center">
-        Scan Barcode Undangan
-      </h2>
+<div class="min-h-screen flex items-start justify-center pt-8 bg-white">
+  <div class="w-full max-w-md px-4 py-2">
+    <h2 class="text-2xl font-dmSerif font-semibold text-[#641b0f] mb-3 text-center">
+      Scan Barcode Undangan
+    </h2>
 
-      <!-- Controls: camera label + select + switch button -->
-      <div class="flex flex-col sm:flex-row items-center sm:justify-between gap-2 mb-2">
-        <div id="cameraLabel" class="text-xs sm:text-sm text-gray-600 text-center sm:text-left">Mencari kamera…</div>
+    <div id="alert"
+      class="hidden w-full max-w-md mx-auto flex items-start rounded-lg border-l-4 bg-white shadow-md p-3 mb-3 transition duration-200"
+      role="alert" aria-live="polite" aria-hidden="true">
 
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <select id="cameraSelect" class="hidden sm:inline-block p-2 border rounded-md text-sm bg-white">
-            <!-- populated by JS -->
-          </select>
-
-          <button id="switchCameraBtn"
-            class="w-full sm:w-auto px-3 py-2 rounded-md text-sm font-medium bg-[#641b0f] text-white shadow-sm hover:opacity-95 focus:outline-none"
-            aria-label="Switch Camera">
-            Switch Camera
-          </button>
-        </div>
+      <!-- Icon -->
+      <div id="alertIcon" class="flex-shrink-0">
+        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M12 20.5a8.5 8.5 0 100-17 8.5 8.5 0 000 17z" />
+        </svg>
       </div>
 
-      <!-- Reader area: responsive height, bigger focus box and reduced lateral padding -->
-      <div id="reader" class="w-full bg-black rounded-lg overflow-hidden flex items-center justify-center mb-3 relative"
-        style="height: min(72vw, 600px); max-height: 600px; min-height: 320px;">
-        <!-- html5-qrcode will inject the video/canvas here -->
-        <div class="text-gray-300 text-sm">Memuat kamera…</div>
-
-        <!-- Visual focus box overlay (larger) -->
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div class="w-11/12 sm:w-9/12 md:w-7/12 aspect-square border-4 border-white/75 rounded-lg shadow-inner"></div>
-        </div>
+      <!-- Content -->
+      <div class="flex-1 min-w-0 pl-3">
+        <p id="alertTitle" class="text-sm font-medium text-gray-900">Mencari kamera…</p>
+        <p id="alertBody" class="text-xs text-gray-500 mt-0.5">Pastikan kamera Anda terhubung dan izinkan akses.</p>
       </div>
 
-      <div id="message" class="text-center text-base sm:text-lg font-medium transition-colors h-8"></div>
+      <!-- Close button -->
+      <button id="closeAlert"
+        class="ml-3 inline-flex items-center justify-center p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 focus:outline-none"
+        aria-label="Tutup notifikasi">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
 
-      <!-- Optional hint / instructions -->
-      <div class="mt-3 text-xs text-gray-500 text-center">
-        Pastikan halaman dijalankan melalui HTTPS (atau localhost) dan berikan izin kamera jika diminta.
+    <div class="flex items-center justify-between mb-2">
+      <div id="cameraLabel" class="text-sm text-gray-600">Mencari kamera…</div>
+      <div class="flex items-center gap-2">
+        <select id="cameraSelect" class="hidden md:inline-block p-1 border rounded text-sm"></select>
+        <button id="switchCameraBtn" class="px-3 py-1 bg-[#641b0f] text-white rounded text-sm">Switch Camera</button>
       </div>
     </div>
+
+    <div id="reader"
+      class="w-full h-72 lg:h-60 md:h-80 lg:h-96 bg-gray-50 rounded-lg mb-3 overflow-hidden border border-gray-200">
+    </div>
+
+    <div id="message" class="text-center text-base font-medium transition-colors text-gray-700 mb-2 hidden"></div>
   </div>
 </div>
 @endsection
@@ -58,37 +63,64 @@
     const cameraLabelEl = document.getElementById('cameraLabel');
     const cameraSelect = document.getElementById('cameraSelect');
 
-    let qrCodeScanner;
+    const alertEl = document.getElementById('alert');
+    const alertIcon = document.getElementById('alertIcon');
+    const alertTitle = document.getElementById('alertTitle');
+    const alertBody = document.getElementById('alertBody');
+    const closeAlertBtn = document.getElementById('closeAlert');
+
+    let qrCodeScanner = null;
     let isProcessing = false;
     let lastDecoded = null;
-    const DUPLICATE_COOLDOWN = 2000; // ms
+    const DUPLICATE_COOLDOWN = 2000;
     let lastTime = 0;
+    let alertTimeout = null;
 
-    let cameras = []; // array of {id, label}
-    let currentIndex = 0; // index into cameras array or into fallbackConfigs
+    let cameras = [];
+    let currentIndex = 0;
     let fallbackConfigs = [
       { config: { facingMode: "environment" }, label: "Rear (environment)" },
       { config: { facingMode: "user" }, label: "Front (user)" }
     ];
-    let usingFallback = false;
 
-    const showMessage = (text, ok = true) => {
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    function showInlineMessage(text = '', ok = true) {
       messageEl.textContent = text;
       messageEl.classList.toggle('text-green-600', ok);
       messageEl.classList.toggle('text-red-600', !ok);
-    };
+    }
+    function clearInlineMessage(){ messageEl.textContent = ''; messageEl.classList.remove('text-green-600','text-red-600') }
 
-    const qrSuccess = async (decodedText /*, decodedResult */) => {
-      const now = Date.now();
+    function resetAlertClasses() {
+      alertEl.classList.remove('border-[#641b0f]','border-green-500','border-red-500','border-yellow-400','border-blue-500');
+      alertTitle.classList.remove('text-[#641b0f]','text-green-700','text-red-700','text-yellow-700','text-blue-700');
+      const svg = alertIcon.querySelector('svg'); if (svg) svg.classList.remove('text-[#641b0f]','text-green-500','text-red-500','text-yellow-400','text-blue-500');
+    }
 
-      if (decodedText === lastDecoded && (now - lastTime) < DUPLICATE_COOLDOWN) {
-        return;
+    function showAlert(type = 'info', title = '', body = '', autoHide = true, ms = 5000) {
+      resetAlertClasses();
+      alertTitle.textContent = title || 'Info'; alertBody.textContent = body || '';
+      switch(type) {
+        case 'success': alertEl.classList.add('border-green-500'); alertTitle.classList.add('text-green-700'); alertIcon.querySelector('svg').classList.add('text-green-500'); break;
+        case 'error': alertEl.classList.add('border-red-500'); alertTitle.classList.add('text-red-700'); alertIcon.querySelector('svg').classList.add('text-red-500'); break;
+        case 'warning': alertEl.classList.add('border-yellow-400'); alertTitle.classList.add('text-yellow-700'); alertIcon.querySelector('svg').classList.add('text-yellow-400'); break;
+        default: alertEl.classList.add('border-[#641b0f]'); alertTitle.classList.add('text-[#641b0f]'); alertIcon.querySelector('svg').classList.add('text-[#641b0f]');
       }
-      lastDecoded = decodedText;
-      lastTime = now;
+      alertEl.classList.remove('hidden');
+      if (alertTimeout) clearTimeout(alertTimeout);
+      if (autoHide) alertTimeout = setTimeout(() => { alertEl.classList.add('hidden'); }, ms);
+    }
+    function hideAlert(){ if (alertTimeout) clearTimeout(alertTimeout); alertEl.classList.add('hidden'); }
+    closeAlertBtn.addEventListener('click', hideAlert);
 
+    const qrSuccess = async (decodedText) => {
+      const now = Date.now();
+      if (decodedText === lastDecoded && (now - lastTime) < DUPLICATE_COOLDOWN) return;
+      lastDecoded = decodedText; lastTime = now;
       if (isProcessing) return;
       isProcessing = true;
+      showInlineMessage('Memproses...', true);
 
       try {
         const response = await fetch("{{ route('scan') }}", {
@@ -99,69 +131,45 @@
           },
           body: JSON.stringify({ code: decodedText })
         });
-
         const data = await response.json();
-        showMessage(data.message || 'Scanned', data.status === 'ok');
-
+        const ok = data.status === 'ok' || data.status === 'success';
+        showInlineMessage(data.message || (ok ? 'Berhasil' : 'Gagal'), ok);
+        showAlert(ok ? 'success' : 'error', ok ? (data.title || 'Berhasil') : (data.title || 'Gagal'), data.message || '', true, 4000);
       } catch (err) {
         console.error('Fetch error:', err);
-        showMessage('Terjadi kesalahan. Coba lagi.', false);
+        showInlineMessage('Terjadi kesalahan. Coba lagi.', false);
+        showAlert('error', 'Terjadi kesalahan', 'Coba lagi atau periksa koneksi.', true, 5000);
       } finally {
-        isProcessing = false;
+        setTimeout(()=>{ isProcessing = false; }, 400);
       }
     };
 
-    const qrError = (err) => {
-      // optional per-frame error
-      // console.debug('QR frame error:', err);
-    };
+    const qrError = (err) => { /* per-frame errors, ignore or log */ };
 
-    const updateCameraLabel = (text) => {
-      cameraLabelEl.textContent = text || '';
-    };
+    const updateCameraLabel = (text) => { cameraLabelEl.textContent = text || ''; };
 
     const startScanner = async (cameraOrConfig) => {
       try {
         if (!qrCodeScanner) qrCodeScanner = new Html5Qrcode(readerEl.id);
-
-        // make sure to stop previous stream before starting new one
-        try { await qrCodeScanner.stop(); } catch (e) { /* ignore if not started */ }
-
-        const qrbox = {
-          width: Math.min(320, readerEl.clientWidth - 20),
-          height: Math.min(320, readerEl.clientHeight - 20)
-        };
-
-        await qrCodeScanner.start(
-          cameraOrConfig,
-          {
-            fps: 10,
-            qrbox,
-            formatsToSupport: [ Html5QrcodeSupportedFormats.QRCODE ]
-          },
-          qrSuccess,
-          qrError
-        );
-
-        // expose to console for debugging
+        try { await qrCodeScanner.stop(); } catch(e) {}
+        const qrbox = { width: Math.min(320, Math.max(200, readerEl.clientWidth - 20)), height: Math.min(320, Math.max(200, readerEl.clientHeight - 20)) };
+        await qrCodeScanner.start(cameraOrConfig, { fps: 10, qrbox, formatsToSupport: [ Html5QrcodeSupportedFormats.QRCODE ] }, qrSuccess, qrError);
         window._qrCodeScanner = qrCodeScanner;
-
+        clearInlineMessage();
       } catch (err) {
         console.error('Start scanner error:', err);
-        showMessage('Gagal mengakses kamera. Coba refresh & beri izin.', false);
+        showInlineMessage('Gagal mengakses kamera. Coba refresh & beri izin.', false);
+        showAlert('error', 'Gagal mengakses kamera', 'Coba refresh & beri izin kamera pada browser.', true, 6000);
       }
     };
 
     const restartWithIndex = async (index) => {
       if (cameras.length > 0) {
-        usingFallback = false;
         currentIndex = index % cameras.length;
         const cam = cameras[currentIndex];
         updateCameraLabel(cam.label || ('Camera ' + (currentIndex + 1)));
-        await startScanner(cam.id || cam.deviceId || cam); // device id string
+        await startScanner(cam.id || cam.deviceId || cam);
       } else {
-        // fallback to facingMode configs
-        usingFallback = true;
         currentIndex = index % fallbackConfigs.length;
         const conf = fallbackConfigs[currentIndex];
         updateCameraLabel(conf.label);
@@ -169,17 +177,11 @@
       }
     };
 
-    // switch button handler: cycle to next camera
     switchBtn.addEventListener('click', async () => {
-      if (cameras.length > 1) {
-        await restartWithIndex((currentIndex + 1) % Math.max(1, cameras.length));
-      } else {
-        // toggle fallback (rear <-> front)
-        await restartWithIndex((currentIndex + 1) % fallbackConfigs.length);
-      }
+      if (cameras.length > 1) await restartWithIndex((currentIndex + 1) % Math.max(1, cameras.length));
+      else await restartWithIndex((currentIndex + 1) % fallbackConfigs.length);
     });
 
-    // camera select handler (if many devices)
     cameraSelect.addEventListener('change', async (e) => {
       const idx = parseInt(e.target.value, 10);
       if (!isNaN(idx)) await restartWithIndex(idx);
@@ -187,22 +189,16 @@
 
     try {
       const rawCams = await Html5Qrcode.getCameras();
-      // rawCams: array of {id, label} or empty if not available
       if (rawCams && rawCams.length > 0) {
-        // Normalize
         cameras = rawCams.map(c => ({ id: c.id, label: c.label || '' }));
-
-        // Try to prefer a back/rear/environment camera
         let preferredIndex = cameras.findIndex(c => /back|rear|environment|wide/i.test(c.label));
         if (preferredIndex === -1) preferredIndex = 0;
 
-        // If more than one camera, populate select and show
         if (cameras.length > 1) {
           cameraSelect.innerHTML = '';
           cameras.forEach((c, i) => {
             const opt = document.createElement('option');
-            opt.value = i;
-            opt.textContent = c.label || `Camera ${i + 1}`;
+            opt.value = i; opt.textContent = c.label || `Camera ${i + 1}`;
             cameraSelect.appendChild(opt);
           });
           cameraSelect.classList.remove('hidden');
@@ -210,20 +206,22 @@
           cameraSelect.classList.add('hidden');
         }
 
-        await restartWithIndex(preferredIndex);
+        if (isIos) {
+          await restartWithIndex(0);
+        } else {
+          await restartWithIndex(preferredIndex);
+        }
       } else {
-        // No device ids returned — fallback to facingMode toggle (useful on iOS)
         cameras = [];
         cameraSelect.classList.add('hidden');
-        // start with rear first
         await restartWithIndex(0);
       }
     } catch (err) {
       console.error('QR init error:', err);
-      showMessage('Tidak dapat mengakses kamera. Pastikan halaman dijalankan di HTTPS & beri izin kamera.', false);
+      showInlineMessage('Tidak dapat mengakses kamera. Pastikan HTTPS & beri izin kamera.', false);
+      showAlert('error', 'Tidak dapat mengakses kamera', 'Pastikan halaman dijalankan di HTTPS & beri izin kamera pada browser.', true, 7000);
     }
 
-    // Cleanup when page unloads (stop camera)
     window.addEventListener('beforeunload', async () => {
       try { if (qrCodeScanner) await qrCodeScanner.stop(); } catch(e) {}
     });
