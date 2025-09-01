@@ -20,8 +20,8 @@
   <link rel="preload" as="image" href="{{ asset('assets/images/nz.png') }}">
   <link rel="preload" as="image" href="{{ asset('assets/images/circle.png') }}">
   
-  <link rel="stylesheet" href="{{ asset('assets/css/app-revision.css') }}">
-  <script src="{{ asset('assets/js/app-revision.js') }}"></script>
+  <link rel="stylesheet" href="{{ asset('assets/css/app-revision2.css') }}">
+  <script src="{{ asset('assets/js/app-revision2.js') }}"></script>
 
   <style>
     .fade-in {
